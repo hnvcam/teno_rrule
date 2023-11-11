@@ -1,0 +1,17 @@
+name: teno_rrule
+description: A starting point for Dart libraries or applications.
+version: 1.0.0
+# repository: https://github.com/my_org/my_repo
+
+environment:
+  sdk: ^3.1.5
+
+# Add regular dependencies here.
+dependencies:
+  teno_datetime: ^1.0.4
+  timezone: ^0.9.2
+  # path: ^1.8.0
+
+dev_dependencies:
+  lints: ^2.0.0
+  test: ^1.21.0
