@@ -1,7 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:teno_rrule/src/conversions.dart';
 import 'package:teno_rrule/src/models/Frequency.dart';
 
-class RecurrenceRule {
+class RecurrenceRule extends Equatable {
   final Frequency frequency;
   final DateTime startDate;
 
@@ -40,9 +41,10 @@ class RecurrenceRule {
       this.weekStart}) {
     assert(endDate == null || count == null,
         'UNTIL and COUNT MUST NOT occur in the same RRULE');
-    assert(endDate == null || endDate!.isUtc, 'required UTC value');
     assert(weekStart == null ||
         (weekStart! >= DateTime.monday && weekStart! <= DateTime.sunday));
+    assert(isLocal != true || endDate == null || endDate!.isUtc,
+        'required UTC value for non-local rrule');
   }
 
   RecurrenceRule copyWith(
@@ -62,7 +64,6 @@ class RecurrenceRule {
       Set<int>? byWeeks,
       Set<int>? bySetPositions,
       int? weekStart}) {
-    assert(endDate == null || endDate.isUtc, 'required UTC value');
     return RecurrenceRule(
         frequency: frequency ?? this.frequency,
         startDate: startDate ?? this.startDate,
@@ -86,4 +87,28 @@ class RecurrenceRule {
   String toString() {
     return rfc2445String;
   }
+
+  static RecurrenceRule? from(String rfc2445String) {
+    return parseRFC2445String(rfc2445String);
+  }
+
+  @override
+  List<Object?> get props => [
+        frequency,
+        startDate,
+        isLocal,
+        endDate,
+        interval,
+        count,
+        bySeconds,
+        byMinutes,
+        byHours,
+        byMonths,
+        byWeekDays,
+        byMonthDays,
+        byYearDays,
+        byWeeks,
+        bySetPositions,
+        weekStart
+      ];
 }
