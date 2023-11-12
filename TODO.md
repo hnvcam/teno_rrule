@@ -1,8 +1,8 @@
 ### Define Recurrence Rule model
 [x] Recurrence Rule, Frequency
 ### Parse and serialize RRule
-[x] Serialize to rfc2445 string
-[x] Parse from rfc2445 string
+[x] Serialize to rfc5545 string
+[x] Parse from rfc5545 string
 ### Generate Recurrences
 [ ] Handle FREQ rule
 [ ] Handle interval rule
@@ -13,7 +13,7 @@
 [ ] Multiple exdates and rrules of a rruleset
 ### Support timezone
 [ ] Start date and exdate has same time zone.
-[ ] Different time zones of start date, exdate and rrules. (Check if this is a case of rfc2445)
+[ ] Different time zones of start date, exdate and rrules. (Check if this is a case of rfc5545)
 ### Limit instances
 [ ] Handle count & until
 [ ] No limit?

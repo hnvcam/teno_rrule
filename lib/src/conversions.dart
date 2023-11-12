@@ -1,18 +1,19 @@
 import 'package:teno_rrule/src/models/Frequency.dart';
 import 'package:teno_rrule/src/models/RecurrenceRule.dart';
+import 'package:teno_rrule/src/models/WeekDay.dart';
 import 'package:teno_rrule/src/teno_rrule_base.dart';
 // tried to use the minimal one
 import 'package:timezone/data/latest_10y.dart';
 import 'package:timezone/standalone.dart';
 
-extension RecurrenceRuleToRFC2445String on RecurrenceRule {
-  String get rfc2445String {
+extension RecurrenceRuleToRFC5545String on RecurrenceRule {
+  String get rfc5545String {
     List<String> rules = [];
     // Frequency
     rules.add('FREQ=${frequency.value}');
     if (endDate != null) {
       // always UTC time
-      rules.add('UNTIL=${_dateTimeToRFC2445String(endDate!)}Z');
+      rules.add('UNTIL=${_dateTimeToRFC5545String(endDate!)}Z');
     }
     if (count != null && count! > 0) {
       rules.add('COUNT=$count');
@@ -22,42 +23,42 @@ extension RecurrenceRuleToRFC2445String on RecurrenceRule {
       rules.add('INTERVAL=$interval');
     }
     if (bySeconds != null) {
-      rules.add('BYSECOND=${_intSetToRFC2445String(bySeconds!)}');
+      rules.add('BYSECOND=${_intSetToRFC5545String(bySeconds!)}');
     }
     if (byMinutes != null) {
-      rules.add('BYMINUTE=${_intSetToRFC2445String(byMinutes!)}');
+      rules.add('BYMINUTE=${_intSetToRFC5545String(byMinutes!)}');
     }
     if (byHours != null) {
-      rules.add('BYHOUR=${_intSetToRFC2445String(byHours!)}');
+      rules.add('BYHOUR=${_intSetToRFC5545String(byHours!)}');
     }
     if (byWeekDays != null) {
-      rules.add('BYDAY=${byWeekDays!.map(_weekDayToRFC2445String).join(',')}');
+      rules.add('BYDAY=${byWeekDays!.map((e) => e.toString()).join(',')}');
     }
     if (byMonthDays != null) {
-      rules.add('BYMONTHDAY=${_intSetToRFC2445String(byMonthDays!)}');
+      rules.add('BYMONTHDAY=${_intSetToRFC5545String(byMonthDays!)}');
     }
     if (byYearDays != null) {
-      rules.add('BYYEARDAY=${_intSetToRFC2445String(byYearDays!)}');
+      rules.add('BYYEARDAY=${_intSetToRFC5545String(byYearDays!)}');
     }
     if (byWeeks != null) {
-      rules.add('BYWEEKNO=${_intSetToRFC2445String(byWeeks!)}');
+      rules.add('BYWEEKNO=${_intSetToRFC5545String(byWeeks!)}');
     }
     if (byMonths != null) {
-      rules.add('BYMONTH=${_intSetToRFC2445String(byMonths!)}');
+      rules.add('BYMONTH=${_intSetToRFC5545String(byMonths!)}');
     }
     if (bySetPositions != null) {
-      rules.add('BYSETPOS=${_intSetToRFC2445String(bySetPositions!)}');
+      rules.add('BYSETPOS=${_intSetToRFC5545String(bySetPositions!)}');
     }
     if (weekStart != null) {
-      rules.add('WKST=${_weekDayToRFC2445String(weekStart!)}');
+      rules.add('WKST=${WeekDay(weekStart!).toString()}');
     }
 
-    return '${_dtstartString(startDate, isLocal)}\nRRULE:${rules.join(';')}';
+    return '${_dtStartString(startDate, isLocal)}\nRRULE:${rules.join(';')}';
   }
 }
 
-RecurrenceRule? parseRFC2445String(String rfc2445string) {
-  final lines = rfc2445string.split('\n');
+RecurrenceRule? parseRFC5545String(String rfc5545string) {
+  final lines = rfc5545string.split('\n');
   DateTime? startDate;
   bool? isLocal;
   RecurrenceRule? rrule;
@@ -79,7 +80,7 @@ RecurrenceRule? parseRFC2445String(String rfc2445string) {
         break;
       default:
         throw UnsupportedError(
-            'Unsupported header of $header in rfc2445 string');
+            'Unsupported header of $header in rfc5545 string');
     }
   }
   return rrule?.copyWith(startDate: startDate, isLocal: isLocal);
@@ -130,7 +131,7 @@ RecurrenceRule _parseRRule(String line) {
   Set<int>? byMinutes;
   Set<int>? byHours;
   Set<int>? byMonths;
-  Set<int>? byWeekDays;
+  Set<WeekDay>? byWeekDays;
   Set<int>? byMonthDays;
   Set<int>? byYearDays;
   Set<int>? byWeeks;
@@ -150,7 +151,7 @@ RecurrenceRule _parseRRule(String line) {
                 throw ParseException('Unsupported FREQ value', value));
         break;
       case 'WKST':
-        weekStart = _parseWeekDay(value.toUpperCase());
+        weekStart = WeekDay.fromString(value).weekDay;
         break;
       case 'COUNT':
         count = int.parse(value);
@@ -213,17 +214,9 @@ RecurrenceRule _parseRRule(String line) {
       bySetPositions: bySetPositions);
 }
 
-Set<int>? _parseWeekDaySet(String value) {
+Set<WeekDay>? _parseWeekDaySet(String value) {
   final weekDayValues = value.split(',');
-  return weekDayValues.map((e) => _parseWeekDay(e)).toSet();
-}
-
-int _parseWeekDay(String value) {
-  return _weekDayPairs
-      .firstWhere((element) => element.value == value,
-          orElse: () =>
-              throw ParseException('Unsupported week day value', value))
-      .day;
+  return weekDayValues.map((e) => WeekDay.fromString(e)).toSet();
 }
 
 Set<int>? _parseIntSet(String value) {
@@ -231,45 +224,27 @@ Set<int>? _parseIntSet(String value) {
   return intValues.map((e) => int.parse(e)).toSet();
 }
 
-String _intSetToRFC2445String(Set<int> intSet) {
+String _intSetToRFC5545String(Set<int> intSet) {
   return intSet.join(',');
 }
 
-const _weekDayPairs = [
-  (day: DateTime.monday, value: 'MO'),
-  (day: DateTime.tuesday, value: 'TU'),
-  (day: DateTime.wednesday, value: 'WE'),
-  (day: DateTime.thursday, value: 'TH'),
-  (day: DateTime.friday, value: 'FR'),
-  (day: DateTime.saturday, value: 'SA'),
-  (day: DateTime.sunday, value: 'SU'),
-];
-
-String _weekDayToRFC2445String(int weekDay) {
-  return _weekDayPairs
-      .firstWhere((element) => element.day == weekDay,
-          orElse: () =>
-              throw UnsupportedError('Invalid week day value of $weekDay'))
-      .value;
-}
-
-String _dateTimeToRFC2445String(DateTime dateTime) {
+String _dateTimeToRFC5545String(DateTime dateTime) {
   return '${dateTime.year}${_padZeroInt(dateTime.month)}${_padZeroInt(dateTime.day)}T'
       '${_padZeroInt(dateTime.hour)}${_padZeroInt(dateTime.minute)}${_padZeroInt(dateTime.second)}';
 }
 
-String _dtstartString(DateTime dateTime, bool isLocal) {
+String _dtStartString(DateTime dateTime, bool isLocal) {
   if (isLocal) {
-    return 'DTSTART:${_dateTimeToRFC2445String(dateTime)}';
+    return 'DTSTART:${_dateTimeToRFC5545String(dateTime)}';
   }
   if (dateTime.isUtc) {
-    return 'DTSTART:${_dateTimeToRFC2445String(dateTime)}Z';
+    return 'DTSTART:${_dateTimeToRFC5545String(dateTime)}Z';
   }
   if (dateTime is TZDateTime) {
-    return 'DTSTART;TZID=${dateTime.location.name}:${_dateTimeToRFC2445String(dateTime)}';
+    return 'DTSTART;TZID=${dateTime.location.name}:${_dateTimeToRFC5545String(dateTime)}';
   }
   final timezoneId = _getTimezoneId(dateTime);
-  return 'DTSTART;TZID=$timezoneId:${_dateTimeToRFC2445String(dateTime)}';
+  return 'DTSTART;TZID=$timezoneId:${_dateTimeToRFC5545String(dateTime)}';
 }
 
 String _getTimezoneId(DateTime dateTime) {

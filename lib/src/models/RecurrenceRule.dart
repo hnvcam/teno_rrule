@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:teno_rrule/src/conversions.dart';
 import 'package:teno_rrule/src/models/Frequency.dart';
+import 'package:teno_rrule/src/models/WeekDay.dart';
 
 class RecurrenceRule extends Equatable {
   final Frequency frequency;
@@ -15,7 +16,7 @@ class RecurrenceRule extends Equatable {
   final Set<int>? byMinutes;
   final Set<int>? byHours;
   final Set<int>? byMonths;
-  final Set<int>? byWeekDays;
+  final Set<WeekDay>? byWeekDays;
   final Set<int>? byMonthDays;
   final Set<int>? byYearDays;
   final Set<int>? byWeeks;
@@ -58,7 +59,7 @@ class RecurrenceRule extends Equatable {
       Set<int>? byMinutes,
       Set<int>? byHours,
       Set<int>? byMonths,
-      Set<int>? byWeekDays,
+      Set<WeekDay>? byWeekDays,
       Set<int>? byMonthDays,
       Set<int>? byYearDays,
       Set<int>? byWeeks,
@@ -85,11 +86,11 @@ class RecurrenceRule extends Equatable {
 
   @override
   String toString() {
-    return rfc2445String;
+    return rfc5545String;
   }
 
-  static RecurrenceRule? from(String rfc2445String) {
-    return parseRFC2445String(rfc2445String);
+  static RecurrenceRule? from(String rfc5545String) {
+    return parseRFC5545String(rfc5545String);
   }
 
   @override
