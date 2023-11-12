@@ -1,10 +1,4 @@
-import 'package:teno_rrule/src/models/Frequency.dart';
-import 'package:teno_rrule/src/models/RecurrenceRule.dart';
-import 'package:teno_rrule/src/models/WeekDay.dart';
-import 'package:teno_rrule/src/teno_rrule_base.dart';
-// tried to use the minimal one
-import 'package:timezone/data/latest_10y.dart';
-import 'package:timezone/standalone.dart';
+part of 'teno_rrule_base.dart';
 
 extension RecurrenceRuleToRFC5545String on RecurrenceRule {
   String get rfc5545String {
@@ -106,17 +100,7 @@ String? _inspectHeader(String line) {
   }
   return tzId == null
       ? (localDateTime, true)
-      : (
-          TZDateTime(
-              getLocation(tzId),
-              localDateTime.year,
-              localDateTime.month,
-              localDateTime.day,
-              localDateTime.hour,
-              localDateTime.minute,
-              localDateTime.second),
-          false
-        );
+      : (toTZDateTime(getLocation(tzId), localDateTime), false);
 }
 
 RecurrenceRule _parseRRule(String line) {
@@ -229,8 +213,8 @@ String _intSetToRFC5545String(Set<int> intSet) {
 }
 
 String _dateTimeToRFC5545String(DateTime dateTime) {
-  return '${dateTime.year}${_padZeroInt(dateTime.month)}${_padZeroInt(dateTime.day)}T'
-      '${_padZeroInt(dateTime.hour)}${_padZeroInt(dateTime.minute)}${_padZeroInt(dateTime.second)}';
+  return '${dateTime.year}${padZeroInt(dateTime.month)}${padZeroInt(dateTime.day)}T'
+      '${padZeroInt(dateTime.hour)}${padZeroInt(dateTime.minute)}${padZeroInt(dateTime.second)}';
 }
 
 String _dtStartString(DateTime dateTime, bool isLocal) {
@@ -243,26 +227,6 @@ String _dtStartString(DateTime dateTime, bool isLocal) {
   if (dateTime is TZDateTime) {
     return 'DTSTART;TZID=${dateTime.location.name}:${_dateTimeToRFC5545String(dateTime)}';
   }
-  final timezoneId = _getTimezoneId(dateTime);
+  final timezoneId = getTimezoneId(dateTime);
   return 'DTSTART;TZID=$timezoneId:${_dateTimeToRFC5545String(dateTime)}';
-}
-
-String _getTimezoneId(DateTime dateTime) {
-  if (!timeZoneDatabase.isInitialized) {
-    initializeTimeZones();
-  }
-  final timezoneOffsetInMilliseconds = dateTime.timeZoneOffset.inMilliseconds;
-  final location = timeZoneDatabase.locations.values.firstWhere((loc) {
-    for (TimeZone zone in loc.zones) {
-      if (zone.offset == timezoneOffsetInMilliseconds) {
-        return true;
-      }
-    }
-    return false;
-  });
-  return location.name;
-}
-
-String _padZeroInt(int value) {
-  return value.toString().padLeft(2, '0');
 }

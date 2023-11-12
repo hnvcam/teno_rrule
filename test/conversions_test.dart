@@ -1,7 +1,4 @@
-import 'package:teno_rrule/src/conversions.dart';
-import 'package:teno_rrule/src/models/Frequency.dart';
-import 'package:teno_rrule/src/models/RecurrenceRule.dart';
-import 'package:teno_rrule/src/models/WeekDay.dart';
+import 'package:teno_rrule/teno_rrule.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest_10y.dart';
 import 'package:timezone/standalone.dart';

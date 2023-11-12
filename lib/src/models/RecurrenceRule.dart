@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:teno_rrule/src/conversions.dart';
 import 'package:teno_rrule/src/models/Frequency.dart';
 import 'package:teno_rrule/src/models/WeekDay.dart';
+import 'package:teno_rrule/src/teno_rrule_base.dart';
 
 class RecurrenceRule extends Equatable {
   final Frequency frequency;
@@ -40,12 +40,46 @@ class RecurrenceRule extends Equatable {
       this.byWeeks,
       this.bySetPositions,
       this.weekStart}) {
+    // The INTERVAL rule part contains a positive integer representing at
+    //       which intervals the recurrence rule repeats.
+    assert(interval > 0);
     assert(endDate == null || count == null,
         'UNTIL and COUNT MUST NOT occur in the same RRULE');
     assert(weekStart == null ||
         (weekStart! >= DateTime.monday && weekStart! <= DateTime.sunday));
+    // The value of the UNTIL rule part MUST have the same
+    //       value type as the "DTSTART" property.  Furthermore, if the
+    //       "DTSTART" property is specified as a date with local time, then
+    //       the UNTIL rule part MUST also be specified as a date with local
+    //       time.  If the "DTSTART" property is specified as a date with UTC
+    //       time or a date with local time and time zone reference, then the
+    //       UNTIL rule part MUST be specified as a date with UTC time.
     assert(isLocal != true || endDate == null || endDate!.isUtc,
         'required UTC value for non-local rrule');
+
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    //    |          |SECONDLY|MINUTELY|HOURLY |DAILY  |WEEKLY|MONTHLY|YEARLY|
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    //    |BYWEEKNO  |N/A     |N/A     |N/A    |N/A    |N/A   |N/A    |Expand|
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    assert(frequency == Frequency.yearly || byWeeks == null);
+
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    //    |          |SECONDLY|MINUTELY|HOURLY |DAILY  |WEEKLY|MONTHLY|YEARLY|
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    //    |BYYEARDAY |Limit   |Limit   |Limit  |N/A    |N/A   |N/A    |Expand|
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    assert(byYearDays == null ||
+        (frequency != Frequency.daily &&
+            frequency != Frequency.weekly &&
+            frequency != Frequency.monthly));
+
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    //    |          |SECONDLY|MINUTELY|HOURLY |DAILY  |WEEKLY|MONTHLY|YEARLY|
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    //    |BYMONTHDAY|Limit   |Limit   |Limit  |Limit  |N/A   |Expand |Expand|
+    //    +----------+--------+--------+-------+-------+------+-------+------+
+    assert(byMonthDays == null || frequency != Frequency.weekly);
   }
 
   RecurrenceRule copyWith(
