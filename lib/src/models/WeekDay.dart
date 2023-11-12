@@ -39,7 +39,7 @@ class WeekDay extends Equatable {
     }
     final regex = RegExp(r'^([+-]?\d{1,2})([A-Z]{2})$');
     final match = regex.firstMatch(value);
-    if (match == null || match.groupCount < 3) {
+    if (match == null || match.groupCount < 2) {
       throw ParseException('Invalid weekday string', value);
     }
     return WeekDay._(

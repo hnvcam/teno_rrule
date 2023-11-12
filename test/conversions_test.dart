@@ -245,6 +245,53 @@ main() {
           startDate:
               TZDateTime(getLocation('America/New_York'), 1996, 11, 05, 9))
     ),
+    (
+      rfc5545String: 'DTSTART;TZID=America/New_York:19970905T090000\n'
+          'RRULE:FREQ=MONTHLY;COUNT=10;BYDAY=1FR',
+      rrule: RecurrenceRule(
+          frequency: Frequency.monthly,
+          count: 10,
+          byWeekDays: {WeekDay.friday.withOccurrence(1)},
+          isLocal: false,
+          startDate:
+              TZDateTime(getLocation('America/New_York'), 1997, 09, 05, 9))
+    ),
+    (
+      rfc5545String: 'DTSTART;TZID=America/New_York:19970907T090000\n'
+          'RRULE:FREQ=MONTHLY;INTERVAL=2;COUNT=10;BYDAY=1SU,-1SU',
+      rrule: RecurrenceRule(
+          frequency: Frequency.monthly,
+          interval: 2,
+          count: 10,
+          byWeekDays: {
+            WeekDay.sunday.withOccurrence(1),
+            WeekDay.sunday.withOccurrence(-1)
+          },
+          isLocal: false,
+          startDate:
+              TZDateTime(getLocation('America/New_York'), 1997, 09, 07, 9))
+    ),
+    (
+      rfc5545String: 'DTSTART;TZID=America/New_York:19970928T090000\n'
+          'RRULE:FREQ=MONTHLY;BYMONTHDAY=-3',
+      rrule: RecurrenceRule(
+          frequency: Frequency.monthly,
+          byMonthDays: {-3},
+          isLocal: false,
+          startDate:
+              TZDateTime(getLocation('America/New_York'), 1997, 09, 28, 9))
+    ),
+    (
+      rfc5545String: 'DTSTART;TZID=America/New_York:19970930T090000\n'
+          'RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=1,-1',
+      rrule: RecurrenceRule(
+          frequency: Frequency.monthly,
+          count: 10,
+          byMonthDays: {1, -1},
+          isLocal: false,
+          startDate:
+              TZDateTime(getLocation('America/New_York'), 1997, 09, 30, 9))
+    ),
   ];
 
   group("Serialize to RFC5545 string collection", () {
