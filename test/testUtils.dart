@@ -1,4 +1,5 @@
 import 'package:test/test.dart';
+import 'package:timezone/standalone.dart';
 
 Matcher isSameRFC5545StringAs(String other) => _RFC5545StringMatcher(other);
 
@@ -34,6 +35,18 @@ class _RFC5545StringMatcher extends Matcher {
     }
     return true;
   }
+}
+
+TZDateTime newYorkDateTime(int year,
+    [int month = 1,
+    int day = 1,
+    hour = 0,
+    minute = 0,
+    second = 0,
+    millisecond = 0,
+    microsecond = 0]) {
+  return TZDateTime(getLocation('America/New_York'), year, month, day, hour,
+      minute, second, millisecond, microsecond);
 }
 
 main() {

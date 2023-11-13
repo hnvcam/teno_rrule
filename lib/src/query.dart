@@ -34,8 +34,13 @@ extension InstancesQuery on RecurrenceRule {
 
       final expandedAndLimitedInstances =
           ByXXXChain.chain.process([instance], this);
-      // filter for until.
       for (var element in expandedAndLimitedInstances) {
+        // filter for start range
+        if (element.isBeforeUnit(effectiveBegin, unit: Unit.second)) {
+          continue;
+        }
+
+        // filter for until
         if (element.isBeforeUnit(effectiveEnd, unit: Unit.second)) {
           results.add(element);
           effectiveCount--;
