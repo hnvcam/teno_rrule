@@ -2,7 +2,7 @@ import '../models/Frequency.dart';
 import '../models/RecurrenceRule.dart';
 import 'BaseHandler.dart';
 
-abstract class SimpleConditionHandler extends BaseHandler {
+abstract class SimpleConditionalHandler extends BaseHandler {
   Set<Frequency> get expandOn;
   Set<Frequency> get limitOn;
 

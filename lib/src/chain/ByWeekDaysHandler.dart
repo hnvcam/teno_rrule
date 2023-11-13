@@ -1,11 +1,11 @@
 import 'dart:core';
 
 import 'package:teno_datetime/teno_datetime.dart';
-import 'package:teno_rrule/src/cache/SimpleMemCache.dart';
-import 'package:teno_rrule/src/models/WeekDay.dart';
 
+import '../cache/SimpleMemCache.dart';
 import '../models/Frequency.dart';
 import '../models/RecurrenceRule.dart';
+import '../models/WeekDay.dart';
 import '../utils.dart';
 import 'BaseHandler.dart';
 
@@ -108,12 +108,7 @@ class ByWeekDaysHandler extends BaseHandler {
   @override
   List<DateTime> limit(List<DateTime> instances, RecurrenceRule rrule) {
     return instances.where((element) {
-      for (WeekDay day in rrule.byWeekDays!) {
-        if (day.weekDay == element.weekday) {
-          return true;
-        }
-      }
-      return false;
+      return _weekDaysContains(rrule.byWeekDays!, element);
     }).toList();
   }
 
@@ -146,28 +141,40 @@ class ByWeekDaysHandler extends BaseHandler {
     // We should use cached here because of the loop of special expand on every day of the month.
     return _weekDaySamplesCache.getOrBuild((dateTime.year, dateTime.month), () {
       final Map<int, Map<int, DateTime>> monthWeekDaySamples = {};
+      final Map<int, int> maxForwardWeekDay = {};
+      final Map<int, int> minReverseWeekDay = {};
 
       final firstDayOfMonth = dateTime.startOf(Unit.month);
       final lastDayOfMonth = dateTime.endOf(Unit.month).copyWith(
           hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0);
 
-      for (DateTime monthDay = firstDayOfMonth;
-          monthDay.isSameOrBeforeUnit(lastDayOfMonth, unit: Unit.day);
-          monthDay = monthDay.addUnit(days: 1)) {
-        final dayMap = monthWeekDaySamples[monthDay.weekday] ?? {};
+      // We use 2 pointer to travel from first day to last day
+      // and the reversed oder from last day to first day, to count for the
+      // occurrence of specific weekday.
+      // But the complexity is still O(n).
 
-        int forwardNo =
-            (monthDay.diff(firstDayOfMonth, unit: Unit.day) / 7).floor() + 1;
-        assert(forwardNo > 0, '$monthDay, $firstDayOfMonth, $forwardNo');
+      DateTime reverseDay = lastDayOfMonth;
+      for (DateTime forwardDay = firstDayOfMonth;
+          forwardDay.isSameOrBeforeUnit(lastDayOfMonth, unit: Unit.day);
+          forwardDay = forwardDay.addUnit(days: 1)) {
+        // Increase the occurrence by 1, simple but always correct.
+        final forwardMap = monthWeekDaySamples[forwardDay.weekday] ?? {};
+        final forwardOccurrenceIndex =
+            (maxForwardWeekDay[forwardDay.weekday] ?? 0) + 1;
+        forwardMap[forwardOccurrenceIndex] = forwardDay;
+        maxForwardWeekDay[forwardDay.weekday] = forwardOccurrenceIndex;
+        monthWeekDaySamples[forwardDay.weekday] = forwardMap;
 
-        int reverseNo =
-            (monthDay.diff(lastDayOfMonth, unit: Unit.day) / 7).floor() - 1;
-        assert(reverseNo < 0, '$monthDay, $lastDayOfMonth, $reverseNo}');
-
-        dayMap[forwardNo] = monthDay;
-        dayMap[reverseNo] = monthDay;
-        monthWeekDaySamples[monthDay.weekday] = dayMap;
+        // Decrease the occurrence by 1, from the end of month.
+        final reverseMap = monthWeekDaySamples[reverseDay.weekday] ?? {};
+        final reverseOccurrenceIndex =
+            (minReverseWeekDay[reverseDay.weekday] ?? 0) - 1;
+        reverseMap[reverseOccurrenceIndex] = reverseDay;
+        minReverseWeekDay[reverseDay.weekday] = reverseOccurrenceIndex;
+        monthWeekDaySamples[reverseDay.weekday] = reverseMap;
+        reverseDay = reverseDay.addUnit(days: -1);
       }
+
       return monthWeekDaySamples;
     });
   }

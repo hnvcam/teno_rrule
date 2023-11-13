@@ -1,14 +1,14 @@
-import 'package:teno_rrule/src/chain/SimpleConditionHandler.dart';
-import 'package:teno_rrule/src/models/Frequency.dart';
-import 'package:teno_rrule/src/models/RecurrenceRule.dart';
-import 'package:teno_rrule/src/utils.dart';
+import '../models/Frequency.dart';
+import '../models/RecurrenceRule.dart';
+import '../utils.dart';
+import 'SimpleConditionalHandler.dart';
 
 ///    +----------+--------+--------+-------+-------+------+-------+------+
 ///    |          |SECONDLY|MINUTELY|HOURLY |DAILY  |WEEKLY|MONTHLY|YEARLY|
 ///    +----------+--------+--------+-------+-------+------+-------+------+
 ///    |BYMONTH   |Limit   |Limit   |Limit  |Limit  |Limit |Limit  |Expand|
 ///    +----------+--------+--------+-------+-------+------+-------+------+
-class ByMonthsHandler extends SimpleConditionHandler {
+class ByMonthsHandler extends SimpleConditionalHandler {
   @override
   bool canProcess(RecurrenceRule rrule) {
     return isNotEmpty(rrule.byMonths);

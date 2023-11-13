@@ -73,9 +73,12 @@ DateTime _getNextInstance(
       DateTime temp = cloneWith(instance);
       for (int i = 1; i <= interval; i++) {
         if (temp.month < DateTime.december) {
-          temp = cloneWith(temp, month: temp.month + 1);
+          // if we don't reset day to 1, then we sometime miss the DateTime.february.
+          // Is there any case that the rule only has FREQ=MONTHLY and no other rule?
+          temp = cloneWith(temp, month: temp.month + 1, day: 1);
         } else {
-          temp = cloneWith(temp, month: DateTime.january, year: temp.year + 1);
+          temp = cloneWith(temp,
+              month: DateTime.january, year: temp.year + 1, day: 1);
         }
       }
       return temp;

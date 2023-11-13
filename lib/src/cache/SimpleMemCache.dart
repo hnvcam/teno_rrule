@@ -27,7 +27,7 @@ class SimpleMemCache<T> {
       final removeKey = _cacheOrder.removeFirst();
       _cache.remove(removeKey);
     }
-    print('cache miss $key');
+    // print('cache miss $key');
     T newValue = builder();
     _cache[key] = newValue;
     _cacheOrder.add(key);

@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:teno_rrule/src/teno_rrule_base.dart';
+
+import '../teno_rrule_base.dart';
 
 class WeekDay extends Equatable {
   static const monday = WeekDay._(DateTime.monday);

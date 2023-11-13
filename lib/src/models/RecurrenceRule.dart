@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:teno_rrule/src/models/Frequency.dart';
-import 'package:teno_rrule/src/models/WeekDay.dart';
-import 'package:teno_rrule/src/teno_rrule_base.dart';
+
+import '../teno_rrule_base.dart';
+import 'Frequency.dart';
+import 'WeekDay.dart';
 
 class RecurrenceRule extends Equatable {
   final Frequency frequency;
