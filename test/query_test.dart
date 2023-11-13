@@ -27,7 +27,7 @@ main() {
         //     (1997 9:00 AM EST) October 26-31;November 1-30;December 1-23
         for (DateTime date =
                 TZDateTime(getLocation('America/New_York'), 1997, 9, 2, 9);
-            date.isBeforeUnit(DateTime.utc(1997, 12, 24), unit: Unit.day);
+            date.isBeforeUnit(DateTime.utc(1997, 12, 24), unit: Unit.second);
             date = date.addUnit(days: 1))
           toTZDateTime(getLocation('America/New_York'), date)
       ]
@@ -192,14 +192,15 @@ main() {
   test('Custom', skip: false, () {
     final data = (
       rruleString: 'DTSTART;TZID=America/New_York:19970902T090000\n'
-          'RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=8;WKST=SU;BYDAY=TU,TH',
+          'RRULE:FREQ=DAILY;UNTIL=19971224T000000Z',
       expected: [
-        // ==> (1997 9:00 AM EDT) September 2,4,16,18,30;
-        //                        October 2,14,16
-        for (var day in [2, 4, 16, 18, 30])
-          TZDateTime(getLocation('America/New_York'), 1997, 9, day, 9),
-        for (var day in [2, 14, 16])
-          TZDateTime(getLocation('America/New_York'), 1997, 10, day, 9),
+        // ==> (1997 9:00 AM EDT) September 2-30;October 1-25
+        //     (1997 9:00 AM EST) October 26-31;November 1-30;December 1-23
+        for (DateTime date =
+                TZDateTime(getLocation('America/New_York'), 1997, 9, 2, 9);
+            date.isBeforeUnit(DateTime.utc(1997, 12, 24), unit: Unit.second);
+            date = date.addUnit(days: 1))
+          toTZDateTime(getLocation('America/New_York'), date)
       ]
     );
 
