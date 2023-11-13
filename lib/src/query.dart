@@ -25,7 +25,7 @@ extension InstancesQuery on RecurrenceRule {
 
     int effectiveCount = count ?? -1;
     // does not include until
-    while (instance.isBeforeUnit(effectiveEnd, unit: Unit.day)) {
+    while (instance.isBeforeUnit(effectiveEnd, unit: Unit.second)) {
       // before range.
       if (instance.isBeforeUnit(effectiveBegin, unit: Unit.second)) {
         instance = _getNextInstance(instance, frequency, interval);
@@ -34,11 +34,17 @@ extension InstancesQuery on RecurrenceRule {
 
       final expandedAndLimitedInstances =
           ByXXXChain.chain.process([instance], this);
-      results.addAll(expandedAndLimitedInstances);
-      effectiveCount--;
-      if (effectiveCount == 0) {
-        return results;
+      // filter for until.
+      for (var element in expandedAndLimitedInstances) {
+        if (element.isBeforeUnit(effectiveEnd, unit: Unit.second)) {
+          results.add(element);
+          effectiveCount--;
+          if (effectiveCount == 0) {
+            return results;
+          }
+        }
       }
+
       instance = _getNextInstance(instance, frequency, interval);
     }
     return results;

@@ -79,7 +79,9 @@ class ByWeekDaysHandler extends BaseHandler {
         }
         return result;
       }
-      return [element];
+
+      return _allWeekDaysOnSameWeek(element, rrule)
+          .where((date) => date.isSameOrAfterUnit(element, unit: Unit.day));
     }).toList();
   }
 
