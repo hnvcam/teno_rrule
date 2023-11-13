@@ -32,7 +32,8 @@ extension InstancesQuery on RecurrenceRule {
         continue;
       }
 
-      final expandedAndLimitedInstances = _applyExpandAndLimitTable(instance);
+      final expandedAndLimitedInstances =
+          ByXXXChain.chain.process([instance], this);
       results.addAll(expandedAndLimitedInstances);
       effectiveCount--;
       if (effectiveCount == 0) {
@@ -41,10 +42,6 @@ extension InstancesQuery on RecurrenceRule {
       instance = _getNextInstance(instance, frequency, interval);
     }
     return results;
-  }
-
-  List<DateTime> _applyExpandAndLimitTable(DateTime instance) {
-    return [instance];
   }
 }
 

@@ -9,7 +9,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   equatable: ^2.0.5
-  teno_datetime: ^1.0.4
+  teno_datetime: ^1.0.6
   timezone: ^0.9.2
   # path: ^1.8.0
 

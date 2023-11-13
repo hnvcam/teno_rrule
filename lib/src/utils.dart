@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:timezone/data/latest_10y.dart';
 import 'package:timezone/standalone.dart';
 
@@ -62,4 +64,60 @@ DateTime cloneWith(DateTime dateTime,
       hour ?? dateTime.hour,
       minute ?? dateTime.minute,
       second ?? dateTime.second);
+}
+
+extension FlatMap<T> on List<T> {
+  Iterable<T> flatMap(Iterable<T> Function(T element) mapper) {
+    return _FlatMapIterable<T>(this, mapper);
+  }
+}
+
+class _FlatMapIterable<T> with IterableBase<T> {
+  final Iterable<T> source;
+  final Iterable<T> Function(T element) mapper;
+
+  const _FlatMapIterable(this.source, this.mapper);
+
+  @override
+  Iterator<T> get iterator => _FlatMapIterator(source, mapper);
+}
+
+class _FlatMapIterator<T> implements Iterator<T> {
+  final Iterable<T> source;
+  final Iterable<T> Function(T element) mapper;
+
+  late Iterator<T> sourceIterator;
+  Iterator<T>? currentIterator;
+
+  _FlatMapIterator(this.source, this.mapper) {
+    sourceIterator = this.source.iterator;
+  }
+
+  @override
+  T get current => currentIterator!.current;
+
+  @override
+  bool moveNext() {
+    if (currentIterator == null) {
+      if (!sourceIterator.moveNext()) {
+        return false;
+      }
+      currentIterator = mapper(sourceIterator.current).iterator;
+    }
+    while (!currentIterator!.moveNext()) {
+      if (!sourceIterator.moveNext()) {
+        return false;
+      }
+      currentIterator = mapper(source.iterator.current).iterator;
+    }
+    return true;
+  }
+}
+
+bool isNotEmpty(Iterable? iterable) {
+  return iterable != null && iterable.isNotEmpty;
+}
+
+bool isEmpty(Iterable? iterable) {
+  return iterable == null || iterable.isEmpty;
 }
