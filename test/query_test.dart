@@ -519,6 +519,28 @@ main() {
         for (int day in [5, 10, 19, 24]) newYorkDateTime(1997, 8, day, 9),
       ]
     ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970805T090000\n'
+          'RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU',
+      expected: [
+        // ==> (1997 EDT) August 5,17,19,31
+        for (int day in [5, 17, 19, 31]) newYorkDateTime(1997, 8, day, 9),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:20070115T090000\n'
+          'RRULE:FREQ=MONTHLY;BYMONTHDAY=15,30;COUNT=5',
+      expected: [
+        // ==> (2007 EST) January 15,30
+        //     (2007 EST) February 15
+        //     (2007 EDT) March 15,30
+        newYorkDateTime(2007, 1, 15, 9),
+        newYorkDateTime(2007, 1, 30, 9),
+        newYorkDateTime(2007, 2, 15, 9),
+        newYorkDateTime(2007, 3, 15, 9),
+        newYorkDateTime(2007, 3, 30, 9),
+      ]
+    ),
   ];
 
   for (var data in testData) {
@@ -530,12 +552,12 @@ main() {
 
   test('Single test, for debugging', skip: false, () {
     final data = (
-    rruleString: 'DTSTART;TZID=America/New_York:19970805T090000\n'
-        'RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO',
-    expected: [
-      // ==> (1997 EDT) August 5,10,19,24
-      for (int day in [5, 10, 19, 24]) newYorkDateTime(1997, 8, day, 9),
-    ]
+      rruleString: 'DTSTART;TZID=America/New_York:19970805T090000\n'
+          'RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU',
+      expected: [
+        // ==> (1997 EDT) August 5,17,19,31
+        for (int day in [5, 17, 19, 31]) newYorkDateTime(1997, 8, day, 9),
+      ]
     );
 
     final rrule = RecurrenceRule.from(data.rruleString);

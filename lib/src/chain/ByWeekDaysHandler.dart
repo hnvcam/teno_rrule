@@ -92,24 +92,31 @@ class ByWeekDaysHandler extends BaseHandler {
         });
       }
 
-      return _allWeekDaysOnSameWeek(element, rrule);
+      final list = _allWeekDaysOnSameWeek(element, rrule);
+      return list;
     }).toList();
   }
 
   Iterable<DateTime> _allWeekDaysOnSameWeek(
       DateTime element, RecurrenceRule rrule) {
     final effectiveWeekStart = rrule.weekStart ?? firstDayOfWeek;
+    final localWeekStart = element.startOf(Unit.week, effectiveWeekStart);
+    final tzWeekStart = cloneWith(element,
+        month: localWeekStart.month, day: localWeekStart.day);
     return rrule.byWeekDays!.map((day) {
-      if (element.weekday >= effectiveWeekStart) {
-        return element.addUnit(
-            days: element.weekday - effectiveWeekStart + day.weekDay);
-      } else if (day.weekDay >= effectiveWeekStart) {
-        return element.addUnit(
-            days: effectiveWeekStart - day.weekDay - element.weekday);
+      late DateTime result;
+      if (day.weekDay >= effectiveWeekStart) {
+        result = tzWeekStart.addUnit(days: day.weekDay - effectiveWeekStart);
       } else {
-        return element.addUnit(days: day.weekDay - element.weekday);
+        result =
+            tzWeekStart.addUnit(days: 7 - effectiveWeekStart + day.weekDay);
       }
-    });
+      // print('$effectiveWeekStart $element ${element.weekday} $day => $result');
+      return result;
+    }).toList(growable: false)
+      // if weekStart > element.weekDay, then the instance is before the element,
+      // we need to sort to keep everything in order. Order is very important in the chain.
+      ..sort((a, b) => a.compareTo(b));
   }
 
   @override

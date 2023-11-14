@@ -31,15 +31,20 @@ class ByMonthDaysHandler extends SimpleConditionalHandler {
   List<DateTime> expand(List<DateTime> instances, RecurrenceRule rrule) {
     return instances.flatMap((element) {
       int lastMonthDay = element.endOf(Unit.month).day;
-      return rrule.byMonthDays!.map((monthDay) {
-        assert(monthDay != 0 && monthDay.abs() <= 31,
-            'Invalid monthDay value $monthDay');
-        if (monthDay > 0) {
-          return cloneWith(element, day: monthDay);
+      final List<DateTime> result = [];
+      for (int monthDay in rrule.byMonthDays!) {
+        // invalid day, skip
+        if (monthDay.abs() > lastMonthDay) {
+          continue;
         }
-        // because monthDay = -1, means lastMonthDay.
-        return cloneWith(element, day: monthDay + lastMonthDay + 1);
-      });
+        if (monthDay > 0) {
+          result.add(cloneWith(element, day: monthDay));
+        } else {
+          // because monthDay = -1, means lastMonthDay.
+          result.add(cloneWith(element, day: monthDay + lastMonthDay + 1));
+        }
+      }
+      return result;
     }).toList();
   }
 
