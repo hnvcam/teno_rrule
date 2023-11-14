@@ -23,6 +23,7 @@ class RecurrenceRule extends Equatable {
   final Set<int>? byWeeks;
   final Set<int>? bySetPositions;
   final int? weekStart;
+  final Set<DateTime>? excludedDates;
 
   RecurrenceRule(
       {required this.frequency,
@@ -40,7 +41,8 @@ class RecurrenceRule extends Equatable {
       this.byYearDays,
       this.byWeeks,
       this.bySetPositions,
-      this.weekStart}) {
+      this.weekStart,
+      this.excludedDates}) {
     // The INTERVAL rule part contains a positive integer representing at
     //       which intervals the recurrence rule repeats.
     assert(interval > 0);
@@ -99,7 +101,8 @@ class RecurrenceRule extends Equatable {
       Set<int>? byYearDays,
       Set<int>? byWeeks,
       Set<int>? bySetPositions,
-      int? weekStart}) {
+      int? weekStart,
+      Set<DateTime>? excludedDates}) {
     return RecurrenceRule(
         frequency: frequency ?? this.frequency,
         startDate: startDate ?? this.startDate,
@@ -116,7 +119,8 @@ class RecurrenceRule extends Equatable {
         byYearDays: byYearDays ?? this.byYearDays,
         byWeeks: byWeeks ?? this.byWeeks,
         bySetPositions: bySetPositions ?? this.bySetPositions,
-        weekStart: weekStart ?? this.weekStart);
+        weekStart: weekStart ?? this.weekStart,
+        excludedDates: excludedDates ?? this.excludedDates);
   }
 
   @override
@@ -145,6 +149,7 @@ class RecurrenceRule extends Equatable {
         byYearDays,
         byWeeks,
         bySetPositions,
-        weekStart
+        weekStart,
+        excludedDates
       ];
 }

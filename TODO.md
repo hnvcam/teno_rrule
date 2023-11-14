@@ -9,11 +9,11 @@
 [x] Handle constrains of start date, end date
 [x] Handle rules of by month, by weeks, ...
 ### Support for Exclusion
-[ ] Single exdate
-[ ] Multiple exdates and rrules of a rruleset
+[x] EXDATE
+[ ] Multiple exdates and rrules of a rruleset (this won't be a case of RFC5545?)
 ### Support timezone
 [x] TZDateTime
-[ ] Start date and exdate has same time zone.
+[x] Start date and exdate has same time zone.
 [ ] Different time zones of start date, exdate and rrules. (Check if this is a case of rfc5545)
 ### Limit instances
 [x] Handle count & until
@@ -25,6 +25,6 @@
 [ ] Import from Google calendar
 [ ] Import from Apple calendar
 ### Document and release
-[ ] Basic usage
+[x] Basic usage
 [ ] Considerations
 [ ] tenolife.com page

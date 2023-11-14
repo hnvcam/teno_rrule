@@ -1,6 +1,6 @@
 name: teno_rrule
 description: Dart Recurrence Rule library that implements RFC5545 (iCalendar), support timezone (TZDateTime), week start (WKST), exclusion (EXDATES),...
-version: 0.0.1
+version: 0.0.2
 repository: https://github.com/hnvcam/teno_rrule
 
 environment:

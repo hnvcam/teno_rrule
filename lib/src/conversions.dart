@@ -47,8 +47,36 @@ extension RecurrenceRuleToRFC5545String on RecurrenceRule {
       rules.add('WKST=${WeekDay(weekStart!).toString()}');
     }
 
-    return '${_dtStartString(startDate, isLocal)}\nRRULE:${rules.join(';')}';
+    return '${_dtStartString(startDate, isLocal)}\n${isNotEmpty(excludedDates) ? '${_exDateString(excludedDates!, isLocal)}\n' : ''}RRULE:${rules.join(';')}';
   }
+}
+
+String _exDateString(Set<DateTime> excludedDates, bool isLocal) {
+  if (isLocal) {
+    return 'EXDATE:${excludedDates.map(_dateTimeToRFC5545String).join(',')}';
+  }
+  if (excludedDates.fold(
+      true, (previousValue, element) => previousValue && element.isUtc)) {
+    return 'EXDATE:${excludedDates.map((e) => '${_dateTimeToRFC5545String(e)}Z').join(',')}';
+  }
+  final firstOffset = excludedDates.first.timeZoneOffset;
+  if (excludedDates.fold(
+      true,
+      (previousValue, element) =>
+          previousValue &&
+          element is TZDateTime &&
+          element.timeZoneOffset == firstOffset)) {
+    return 'EXDATE;TZID=${(excludedDates.first as TZDateTime).location.name}:${excludedDates.map(_dateTimeToRFC5545String).join(',')}';
+  }
+  if (excludedDates.fold(
+      true,
+      (previousValue, element) =>
+          previousValue && element.timeZoneOffset == firstOffset)) {
+    final timezoneId = getTimezoneId(excludedDates.first);
+    return 'EXDATE;TZID=$timezoneId:${excludedDates.map(_dateTimeToRFC5545String).join(',')}';
+  }
+  throw UnsupportedError(
+      'Unsupported non local DateTimes with different timezone');
 }
 
 RecurrenceRule? parseRFC5545String(String rfc5545string) {
@@ -56,6 +84,7 @@ RecurrenceRule? parseRFC5545String(String rfc5545string) {
   DateTime? startDate;
   bool? isLocal;
   RecurrenceRule? rrule;
+  Set<DateTime>? excludedDates;
   for (String line in lines) {
     final header = _inspectHeader(line);
     if (header == null) {
@@ -64,8 +93,10 @@ RecurrenceRule? parseRFC5545String(String rfc5545string) {
     }
     switch (header.toUpperCase()) {
       case 'RRULE':
-      case 'EXRULE':
         rrule = _parseRRule(line);
+        break;
+      case 'EXDATE':
+        excludedDates = _parseExDates(line);
         break;
       case 'DTSTART':
         final parsedResult = _parseStartDate(line);
@@ -77,7 +108,25 @@ RecurrenceRule? parseRFC5545String(String rfc5545string) {
             'Unsupported header of $header in rfc5545 string');
     }
   }
-  return rrule?.copyWith(startDate: startDate, isLocal: isLocal);
+  return rrule?.copyWith(
+      startDate: startDate, isLocal: isLocal, excludedDates: excludedDates);
+}
+
+Set<DateTime>? _parseExDates(String line) {
+  final regex = RegExp(r'EXDATE(?:;TZID=([^:=]+?))?[:=]([^;\s]+)');
+  final match = regex.firstMatch(line);
+  final tzId = match?[1];
+  final listDateTimes = match?[2];
+  if (listDateTimes == null) {
+    return null;
+  }
+  return listDateTimes.split(',').map((dateTimeString) {
+    final localDateTime = DateTime.parse(dateTimeString);
+    if (tzId == null) {
+      return localDateTime;
+    }
+    return toTZDateTime(getLocation(tzId), localDateTime);
+  }).toSet();
 }
 
 String? _inspectHeader(String line) {

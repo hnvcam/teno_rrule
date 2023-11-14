@@ -289,6 +289,37 @@ main() {
           startDate:
               TZDateTime(getLocation('America/New_York'), 1997, 09, 30, 9))
     ),
+    (
+      rfc5545String: 'DTSTART;TZID=America/New_York:19970902T090000\n'
+          'EXDATE;TZID=America/New_York:19970902T090000\n'
+          'RRULE:FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13',
+      rrule: RecurrenceRule(
+          frequency: Frequency.monthly,
+          byMonthDays: {13},
+          byWeekDays: {WeekDay.friday},
+          isLocal: false,
+          startDate:
+              TZDateTime(getLocation('America/New_York'), 1997, 09, 02, 9),
+          excludedDates: {
+            TZDateTime(getLocation('America/New_York'), 1997, 09, 02, 9)
+          })
+    ),
+    (
+      rfc5545String: 'DTSTART;TZID=America/New_York:19970902T090000\n'
+          'EXDATE;TZID=America/New_York:19970902T090000,19980213T090000\n'
+          'RRULE:FREQ=MONTHLY;BYDAY=FR;BYMONTHDAY=13',
+      rrule: RecurrenceRule(
+          frequency: Frequency.monthly,
+          byMonthDays: {13},
+          byWeekDays: {WeekDay.friday},
+          isLocal: false,
+          startDate:
+              TZDateTime(getLocation('America/New_York'), 1997, 09, 02, 9),
+          excludedDates: {
+            TZDateTime(getLocation('America/New_York'), 1997, 09, 02, 9),
+            TZDateTime(getLocation('America/New_York'), 1998, 02, 13, 9),
+          })
+    ),
   ];
 
   group("Serialize to RFC5545 string collection", () {

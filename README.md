@@ -95,6 +95,19 @@ final rrule = RecurrenceRule(
     startDate:
     TZDateTime(getLocation('America/New_York'), 1997, 09, 07, 9));
 ```
+#### To exclude a date (EXDATE rule)
+```dart
+final rrule = RecurrenceRule(
+    frequency: Frequency.monthly,
+    byMonthDays: {13},
+    byWeekDays: {WeekDay.friday},
+    isLocal: false,
+    startDate:
+        TZDateTime(getLocation('America/New_York'), 1997, 09, 02, 9),
+    excludedDates: {
+        TZDateTime(getLocation('America/New_York'), 1997, 09, 02, 9)
+    });
+```
 #### copyWith
 ```dart
 final anotherRRule = rrule.copyWith(interval: 5, count: 5);
