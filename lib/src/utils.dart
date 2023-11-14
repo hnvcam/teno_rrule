@@ -4,6 +4,10 @@ import 'package:timezone/data/latest_10y.dart';
 import 'package:timezone/standalone.dart';
 
 Location getTimeLocation(DateTime dateTime) {
+  if (dateTime is TZDateTime) {
+    return dateTime.location;
+  }
+
   if (!timeZoneDatabase.isInitialized) {
     initializeTimeZones();
   }
@@ -66,35 +70,35 @@ DateTime cloneWith(DateTime dateTime,
       second ?? dateTime.second);
 }
 
-extension FlatMap<T> on List<T> {
-  Iterable<T> flatMap(Iterable<T> Function(T element) mapper) {
-    return _FlatMapIterable<T>(this, mapper);
+extension FlatMap<T> on Iterable<T> {
+  Iterable<U> flatMap<U>(Iterable<U> Function(T element) mapper) {
+    return _FlatMapIterable<T, U>(this, mapper);
   }
 }
 
-class _FlatMapIterable<T> with IterableBase<T> {
+class _FlatMapIterable<T, U> with IterableBase<U> {
   final Iterable<T> source;
-  final Iterable<T> Function(T element) mapper;
+  final Iterable<U> Function(T element) mapper;
 
   const _FlatMapIterable(this.source, this.mapper);
 
   @override
-  Iterator<T> get iterator => _FlatMapIterator(source, mapper);
+  Iterator<U> get iterator => _FlatMapIterator(source, mapper);
 }
 
-class _FlatMapIterator<T> implements Iterator<T> {
+class _FlatMapIterator<T, U> implements Iterator<U> {
   final Iterable<T> source;
-  final Iterable<T> Function(T element) mapper;
+  final Iterable<U> Function(T element) mapper;
 
   late Iterator<T> sourceIterator;
-  Iterator<T>? currentIterator;
+  Iterator<U>? currentIterator;
 
   _FlatMapIterator(this.source, this.mapper) {
     sourceIterator = this.source.iterator;
   }
 
   @override
-  T get current => currentIterator!.current;
+  U get current => currentIterator!.current;
 
   @override
   bool moveNext() {
@@ -108,7 +112,7 @@ class _FlatMapIterator<T> implements Iterator<T> {
       if (!sourceIterator.moveNext()) {
         return false;
       }
-      currentIterator = mapper(source.iterator.current).iterator;
+      currentIterator = mapper(sourceIterator.current).iterator;
     }
     return true;
   }

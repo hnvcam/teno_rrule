@@ -5,20 +5,36 @@ extension InstancesQuery on RecurrenceRule {
     return between(startDate.addUnit(seconds: -1), maxAllowedDate);
   }
 
+  // timezone aware
   List<DateTime> between(DateTime begin, DateTime end) {
     if (count == 0 || interval == 0) {
       return [];
     }
-    Location? timeLocation;
-    if (!isLocal) {
-      timeLocation = getTimeLocation(startDate);
-    }
-    final tzBegin =
-        timeLocation == null ? begin : toTZDateTime(timeLocation, begin);
-    final tzEnd = timeLocation == null ? end : toTZDateTime(timeLocation, end);
 
-    final effectiveBegin = tzBegin.orBeforeUnit(startDate, unit: Unit.second);
-    final effectiveEnd = endDate == null ? tzEnd : tzEnd.orAfterUnit(endDate!);
+    //       The value of the UNTIL rule part MUST have the same
+    //       value type as the "DTSTART" property.  Furthermore, if the
+    //       "DTSTART" property is specified as a date with local time, then
+    //       the UNTIL rule part MUST also be specified as a date with local
+    //       time.  If the "DTSTART" property is specified as a date with UTC
+    //       time or a date with local time and time zone reference, then the
+    //       UNTIL rule part MUST be specified as a date with UTC time.  In the
+    //       case of the "STANDARD" and "DAYLIGHT" sub-components the UNTIL
+    //       rule part MUST always be specified as a date with UTC time.  If
+    //       specified as a DATE-TIME value, then it MUST be specified in a UTC
+    //       time format.
+    // *** I understand that if DTSTART is a timezone-aware type, the UNTIL will have the same
+    // *** timezone. The Z character is for not needing to specify the timezone again.
+    final tzEndDate = endDate == null
+        ? null
+        : cloneWith(startDate,
+            year: endDate!.year,
+            month: endDate!.month,
+            day: endDate!.day,
+            hour: endDate!.hour,
+            minute: endDate!.minute,
+            second: endDate!.second);
+    final effectiveBegin = begin.orBeforeUnit(startDate, unit: Unit.second);
+    final effectiveEnd = tzEndDate == null ? end : end.orAfterUnit(tzEndDate);
 
     final results = <DateTime>[];
     DateTime instance = cloneWith(startDate);

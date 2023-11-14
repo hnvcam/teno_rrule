@@ -21,4 +21,4 @@ class ParseException implements Exception {
   }
 }
 
-final maxAllowedDate = DateTime(2100, 12, 31);
+final maxAllowedDate = DateTime.utc(2100, 12, 31);

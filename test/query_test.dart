@@ -42,7 +42,7 @@ main() {
         //                        November 1,3,5,7...25,27,29;
         //                        December 1,3,...
         for (DateTime date = newYorkDateTime(1997, 9, 2, 9);
-            date.isBeforeUnit(maxAllowedDate, unit: Unit.day);
+            date.isBeforeUnit(maxAllowedDate, unit: Unit.second);
             date = date.addUnit(days: 2))
           toTZDateTime(getLocation('America/New_York'), date)
       ]
@@ -360,6 +360,165 @@ main() {
         newYorkDateTime(2006, 1, 1, 9),
       ]
     ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970519T090000\n'
+          'RRULE:FREQ=YEARLY;BYDAY=20MO;COUNT=3', // Added COUNT=3 for easier testing
+      expected: [
+        // ==> (1997 9:00 AM EDT) May 19
+        //     (1998 9:00 AM EDT) May 18
+        //     (1999 9:00 AM EDT) May 17
+        newYorkDateTime(1997, 5, 19, 9),
+        newYorkDateTime(1998, 5, 18, 9),
+        newYorkDateTime(1999, 5, 17, 9),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970313T090000\n'
+          'RRULE:FREQ=YEARLY;BYMONTH=3;BYDAY=TH;COUNT=11', // Added COUNT=11 for easier testing
+      expected: [
+        // ==> (1997 9:00 AM EST) March 13,20,27
+        //     (1998 9:00 AM EST) March 5,12,19,26
+        //     (1999 9:00 AM EST) March 4,11,18,25
+        for (int day in [13, 20, 27]) newYorkDateTime(1997, 3, day, 9),
+        for (int day in [5, 12, 19, 26]) newYorkDateTime(1998, 3, day, 9),
+        for (int day in [4, 11, 18, 25]) newYorkDateTime(1999, 3, day, 9),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970605T090000\n'
+          'RRULE:FREQ=YEARLY;BYDAY=TH;BYMONTH=6,7,8;UNTIL=19990831T000000Z', // Added UNTIL for easier testing
+      expected: [
+        // ==> (1997 9:00 AM EDT) June 5,12,19,26;July 3,10,17,24,31;
+        //                        August 7,14,21,28
+        //     (1998 9:00 AM EDT) June 4,11,18,25;July 2,9,16,23,30;
+        //                        August 6,13,20,27
+        //     (1999 9:00 AM EDT) June 3,10,17,24;July 1,8,15,22,29;
+        //                        August 5,12,19,26
+        for (int day in [5, 12, 19, 26]) newYorkDateTime(1997, 6, day, 9),
+        for (int day in [3, 10, 17, 24, 31]) newYorkDateTime(1997, 7, day, 9),
+        for (int day in [7, 14, 21, 28]) newYorkDateTime(1997, 8, day, 9),
+        for (int day in [4, 11, 18, 25]) newYorkDateTime(1998, 6, day, 9),
+        for (int day in [2, 9, 16, 23, 30]) newYorkDateTime(1998, 7, day, 9),
+        for (int day in [6, 13, 20, 27]) newYorkDateTime(1998, 8, day, 9),
+        for (int day in [3, 10, 17, 24]) newYorkDateTime(1999, 6, day, 9),
+        for (int day in [1, 8, 15, 22, 29]) newYorkDateTime(1999, 7, day, 9),
+        for (int day in [5, 12, 19, 26]) newYorkDateTime(1999, 8, day, 9),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970913T090000\n'
+          'RRULE:FREQ=MONTHLY;BYDAY=SA;BYMONTHDAY=7,8,9,10,11,12,13;COUNT=10', // Added COUNT for easier testing
+      expected: [
+        // ==> (1997 9:00 AM EDT) September 13;October 11
+        //     (1997 9:00 AM EST) November 8;December 13
+        //     (1998 9:00 AM EST) January 10;February 7;March 7
+        //     (1998 9:00 AM EDT) April 11;May 9;June 13...
+        newYorkDateTime(1997, 9, 13, 9),
+        newYorkDateTime(1997, 10, 11, 9),
+        newYorkDateTime(1997, 11, 8, 9),
+        newYorkDateTime(1997, 12, 13, 9),
+        newYorkDateTime(1998, 1, 10, 9),
+        newYorkDateTime(1998, 2, 7, 9),
+        newYorkDateTime(1998, 3, 7, 9),
+        newYorkDateTime(1998, 4, 11, 9),
+        newYorkDateTime(1998, 5, 9, 9),
+        newYorkDateTime(1998, 6, 13, 9),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970904T090000\n'
+          'RRULE:FREQ=MONTHLY;COUNT=3;BYDAY=TU,WE,TH;BYSETPOS=3',
+      expected: [
+        // ==> (1997 9:00 AM EDT) September 4;October 7
+        //     (1997 9:00 AM EST) November 6
+        newYorkDateTime(1997, 9, 4, 9),
+        newYorkDateTime(1997, 10, 7, 9),
+        newYorkDateTime(1997, 11, 6, 9),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970929T090000\n'
+          'RRULE:FREQ=MONTHLY;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-2;COUNT=7', // added COUNT for easier testing
+      expected: [
+        // ==> (1997 9:00 AM EDT) September 29
+        //     (1997 9:00 AM EST) October 30;November 27;December 30
+        //     (1998 9:00 AM EST) January 29;February 26;March 30
+        //     ...
+        newYorkDateTime(1997, 9, 29, 9),
+        newYorkDateTime(1997, 10, 30, 9),
+        newYorkDateTime(1997, 11, 27, 9),
+        newYorkDateTime(1997, 12, 30, 9),
+        newYorkDateTime(1998, 1, 29, 9),
+        newYorkDateTime(1998, 2, 26, 9),
+        newYorkDateTime(1998, 3, 30, 9),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970902T090000\n'
+          'RRULE:FREQ=HOURLY;INTERVAL=3;UNTIL=19970902T170000Z',
+      expected: [
+        // ==> (September 2, 1997 EDT) 09:00,12:00,15:00
+        newYorkDateTime(1997, 9, 2, 9),
+        newYorkDateTime(1997, 9, 2, 12),
+        newYorkDateTime(1997, 9, 2, 15),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970902T090000\n'
+          'RRULE:FREQ=MINUTELY;INTERVAL=15;COUNT=6',
+      expected: [
+        // ==> (September 2, 1997 EDT) 09:00,09:15,09:30,09:45,10:00,10:15
+        for (int i = 0; i < 6; i++)
+          newYorkDateTime(1997, 9, 2, 9).addUnit(minutes: i * 15),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970902T090000\n'
+          'RRULE:FREQ=MINUTELY;INTERVAL=90;COUNT=4',
+      expected: [
+        // ==> (September 2, 1997 EDT) 09:00,10:30;12:00;13:30
+        for (int i = 0; i < 4; i++)
+          newYorkDateTime(1997, 9, 2, 9).addUnit(minutes: i * 90),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970902T090000\n'
+          'RRULE:FREQ=DAILY;BYHOUR=9,10,11,12,13,14,15,16;BYMINUTE=0,20,40;UNTIL=19970903T235959Z', // Added UNTIL for easier testing
+      expected: [
+        // ==> (September 2, 1997 EDT) 9:00,9:20,9:40,10:00,10:20,
+        //                             ... 16:00,16:20,16:40
+        //     (September 3, 1997 EDT) 9:00,9:20,9:40,10:00,10:20,
+        //                             ...16:00,16:20,16:40
+        //     ...
+        for (int day = 2; day <= 3; day++)
+          for (int hour in [9, 10, 11, 12, 13, 14, 15, 16])
+            for (int minute in [0, 20, 40])
+              newYorkDateTime(1997, 9, day, hour, minute),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970902T090000\n'
+          'RRULE:FREQ=MINUTELY;INTERVAL=20;BYHOUR=9,10,11,12,13,14,15,16;UNTIL=19970903T235959Z', // Added UNTIL for easier testing
+      expected: [
+        // ==> (September 2, 1997 EDT) 9:00,9:20,9:40,10:00,10:20,
+        //                             ... 16:00,16:20,16:40
+        //     (September 3, 1997 EDT) 9:00,9:20,9:40,10:00,10:20,
+        //                             ...16:00,16:20,16:40
+        //     ...
+        for (int day = 2; day <= 3; day++)
+          for (int hour in [9, 10, 11, 12, 13, 14, 15, 16])
+            for (int minute in [0, 20, 40])
+              newYorkDateTime(1997, 9, day, hour, minute),
+      ]
+    ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970805T090000\n'
+          'RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO',
+      expected: [
+        // ==> (1997 EDT) August 5,10,19,24
+        for (int day in [5, 10, 19, 24]) newYorkDateTime(1997, 8, day, 9),
+      ]
+    ),
   ];
 
   for (var data in testData) {
@@ -369,25 +528,14 @@ main() {
     });
   }
 
-  test('Custom', skip: false, () {
+  test('Single test, for debugging', skip: false, () {
     final data = (
-      rruleString: 'DTSTART;TZID=America/New_York:19970930T090000\n'
-          'RRULE:FREQ=MONTHLY;COUNT=10;BYMONTHDAY=1,-1',
-      expected: [
-        // ==> (1997 9:00 AM EDT) September 30;October 1
-        //     (1997 9:00 AM EST) October 31;November 1,30;December 1,31
-        //     (1998 9:00 AM EST) January 1,31;February 1
-        newYorkDateTime(1997, 9, 30, 9),
-        newYorkDateTime(1997, 10, 1, 9),
-        newYorkDateTime(1997, 10, 31, 9),
-        newYorkDateTime(1997, 11, 1, 9),
-        newYorkDateTime(1997, 11, 30, 9),
-        newYorkDateTime(1997, 12, 1, 9),
-        newYorkDateTime(1997, 12, 31, 9),
-        newYorkDateTime(1998, 1, 1, 9),
-        newYorkDateTime(1998, 1, 31, 9),
-        newYorkDateTime(1998, 2, 1, 9),
-      ]
+    rruleString: 'DTSTART;TZID=America/New_York:19970805T090000\n'
+        'RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=MO',
+    expected: [
+      // ==> (1997 EDT) August 5,10,19,24
+      for (int day in [5, 10, 19, 24]) newYorkDateTime(1997, 8, day, 9),
+    ]
     );
 
     final rrule = RecurrenceRule.from(data.rruleString);

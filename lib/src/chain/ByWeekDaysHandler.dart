@@ -85,6 +85,13 @@ class ByWeekDaysHandler extends BaseHandler {
         return result;
       }
 
+      // expanding for yearly with byMonths has been handled above.
+      if (rrule.frequency == Frequency.yearly) {
+        return rrule.byWeekDays!.flatMap((weekDay) {
+          return _allWeekDaysOfYear(weekDay, element);
+        });
+      }
+
       return _allWeekDaysOnSameWeek(element, rrule);
     }).toList();
   }
@@ -102,7 +109,7 @@ class ByWeekDaysHandler extends BaseHandler {
       } else {
         return element.addUnit(days: day.weekDay - element.weekday);
       }
-    }).where((generatedElement) => generatedElement.isSameOrAfterUnit(element));
+    });
   }
 
   @override
@@ -181,5 +188,35 @@ class ByWeekDaysHandler extends BaseHandler {
 
   DateTime? _findWeekDayOccurrence(WeekDay weekDay, DateTime dateTime) {
     return _getWeekDaySamples(dateTime)[weekDay.weekDay]?[weekDay.occurrence];
+  }
+
+  Iterable<DateTime> _allWeekDaysOfYear(WeekDay weekDay, DateTime element) {
+    int count = 0;
+    final result = <DateTime>[];
+    bool reversed = weekDay.occurrence != null && weekDay.occurrence! < 0;
+
+    DateTime date = reversed
+        ? element.endOf(Unit.year).copyWith(
+            hour: 0, minute: 0, second: 0, millisecond: 0, microsecond: 0)
+        : element.startOf(Unit.year);
+    while (date.isSameUnit(element, unit: Unit.year)) {
+      if (date.weekday == weekDay.weekDay) {
+        count = count + (reversed ? -1 : 1);
+      }
+      if (weekDay.occurrence == null || weekDay.occurrence == count) {
+        result.add(cloneWith(element, month: date.month, day: date.day));
+        if (weekDay.occurrence != null) {
+          // found, exit!
+          return result;
+        }
+      }
+      // if we haven't found the first weekDay, then we step 1 day, otherwise step 1 week
+      if (count == 0) {
+        date = date.addUnit(days: reversed ? -1 : 1);
+      } else {
+        date = date.addUnit(days: reversed ? -7 : 7);
+      }
+    }
+    return result;
   }
 }
