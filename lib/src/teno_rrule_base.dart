@@ -1,10 +1,10 @@
 import 'package:teno_datetime/teno_datetime.dart';
-import 'package:teno_rrule/src/chain/ByXXXChain.dart';
-import 'package:teno_rrule/src/models/Frequency.dart';
-import 'package:teno_rrule/src/models/RecurrenceRule.dart';
-import 'package:teno_rrule/src/models/WeekDay.dart';
 import 'package:timezone/standalone.dart';
 
+import 'chain/ByXXXChain.dart';
+import 'models/Frequency.dart';
+import 'models/RecurrenceRule.dart';
+import 'models/WeekDay.dart';
 import 'utils.dart';
 
 part 'conversions.dart';

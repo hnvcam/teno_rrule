@@ -1,12 +1,12 @@
-import 'package:teno_rrule/src/chain/ByHoursHandler.dart';
-import 'package:teno_rrule/src/chain/ByMinutesHandler.dart';
-import 'package:teno_rrule/src/chain/BySecondsHandler.dart';
-import 'package:teno_rrule/src/chain/BySetPosHandler.dart';
-
 import 'BaseHandler.dart';
+import 'ByHoursHandler.dart';
+import 'ByMinutesHandler.dart';
 import 'ByMonthDaysHandler.dart';
 import 'ByMonthsHandler.dart';
+import 'BySecondsHandler.dart';
+import 'BySetPosHandler.dart';
 import 'ByWeekDaysHandler.dart';
+import 'ByWeeksHandler.dart';
 import 'ByYearDaysHandler.dart';
 
 class ByXXXChain {
@@ -25,8 +25,10 @@ class ByXXXChain {
     byMonthDaysHandler.next = byWeekDaysHandler;
     final byYearDaysHandler = ByYearDaysHandler();
     byYearDaysHandler.next = byMonthDaysHandler;
+    final byWeeksHandler = ByWeeksHandler();
+    byWeeksHandler.next = byYearDaysHandler;
     _chain = ByMonthsHandler();
-    _chain.next = byYearDaysHandler;
+    _chain.next = byWeeksHandler;
   }
 
   static final _sharedInstance = ByXXXChain._();

@@ -86,14 +86,13 @@ class ByWeekDaysHandler extends BaseHandler {
       }
 
       // expanding for yearly with byMonths has been handled above.
-      if (rrule.frequency == Frequency.yearly) {
+      if (rrule.frequency == Frequency.yearly && isEmpty(rrule.byWeeks)) {
         return rrule.byWeekDays!.flatMap((weekDay) {
           return _allWeekDaysOfYear(weekDay, element);
         });
       }
 
-      final list = _allWeekDaysOnSameWeek(element, rrule);
-      return list;
+      return _allWeekDaysOnSameWeek(element, rrule);
     }).toList();
   }
 
@@ -104,6 +103,11 @@ class ByWeekDaysHandler extends BaseHandler {
     final tzWeekStart = cloneWith(element,
         month: localWeekStart.month, day: localWeekStart.day);
     return rrule.byWeekDays!.map((day) {
+      // The BYDAY rule part MUST
+      //       NOT be specified with a numeric value when the FREQ rule part is
+      //       not set to MONTHLY or YEARLY.
+      assert(day.occurrence == null);
+
       late DateTime result;
       if (day.weekDay >= effectiveWeekStart) {
         result = tzWeekStart.addUnit(days: day.weekDay - effectiveWeekStart);

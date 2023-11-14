@@ -541,6 +541,19 @@ main() {
         newYorkDateTime(2007, 3, 30, 9),
       ]
     ),
+    (
+      rruleString: 'DTSTART;TZID=America/New_York:19970512T090000\n'
+          'RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO;COUNT=3', // Added COUNT for easier testing
+      expected: [
+        //  ==> (1997 9:00 AM EDT) May 12
+        //      (1998 9:00 AM EDT) May 11
+        //      (1999 9:00 AM EDT) May 17
+        //      ...
+        newYorkDateTime(1997, 5, 12, 9),
+        newYorkDateTime(1998, 5, 11, 9),
+        newYorkDateTime(1999, 5, 17, 9),
+      ]
+    ),
   ];
 
   for (var data in testData) {
@@ -552,11 +565,16 @@ main() {
 
   test('Single test, for debugging', skip: false, () {
     final data = (
-      rruleString: 'DTSTART;TZID=America/New_York:19970805T090000\n'
-          'RRULE:FREQ=WEEKLY;INTERVAL=2;COUNT=4;BYDAY=TU,SU;WKST=SU',
+      rruleString: 'DTSTART;TZID=America/New_York:19970512T090000\n'
+          'RRULE:FREQ=YEARLY;BYWEEKNO=20;BYDAY=MO;COUNT=3', // Added COUNT for easier testing
       expected: [
-        // ==> (1997 EDT) August 5,17,19,31
-        for (int day in [5, 17, 19, 31]) newYorkDateTime(1997, 8, day, 9),
+        //  ==> (1997 9:00 AM EDT) May 12
+        //      (1998 9:00 AM EDT) May 11
+        //      (1999 9:00 AM EDT) May 17
+        //      ...
+        newYorkDateTime(1997, 5, 12, 9),
+        newYorkDateTime(1998, 5, 11, 9),
+        newYorkDateTime(1999, 5, 17, 9),
       ]
     );
 

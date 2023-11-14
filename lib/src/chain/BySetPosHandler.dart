@@ -51,7 +51,7 @@ class BySetPosHandler extends SimpleConditionalHandler {
 
   @override
   List<DateTime> expand(List<DateTime> instances, RecurrenceRule rrule) {
-    throw UnimplementedError();
+    throw UnsupportedError('Unsupported expand on FREQ ${rrule.frequency}');
   }
 
   /// This always gets called on the same group instances of the same FREQ by design.
