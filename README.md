@@ -1,5 +1,5 @@
 [![Build Status](https://github.com/hnvcam/teno_rrule/actions/workflows/ci.yaml/badge.svg)](https://github.com/hnvcam/teno_rrule)
-[![codecov](https://codecov.io/gh/hnvcam/teno_rrule/graph/badge.svg?token=FCRWMFYD3O)](https://codecov.io/gh/hnvcam/teno_rrule)
+[![codecov](https://codecov.io/gh/hnvcam/teno_rrule/graph/badge.svg?token=APASI667F0)](https://codecov.io/gh/hnvcam/teno_rrule)
 [![Pub Package](https://img.shields.io/pub/v/teno_rrule)](https://pub.dev/packages/teno_rrule)
 
 ## Dart Recurrence Rule implements RFC5545 (iCalendar)
@@ -111,8 +111,10 @@ You can refer to the current progress at: [TODO.md](TODO.md)
 Please submit an issue at https://github.com/hnvcam/teno_rrule/issues. And give me sometime to take a look on it.
 I won't promise to take the action soon, but I will reply you my plan.
 
+
 ---
+
+## If you find this library is useful
 <div style="text-align: center;">
-<h4>If you find this library is useful</h4>
-[!["Buy Me A Coffee"](https://www.buymeacoffee.com/assets/img/custom_images/orange_img.png)](https://www.buymeacoffee.com/hnvcam)
+<script type="text/javascript" src="https://cdnjs.buymeacoffee.com/1.0.0/button.prod.min.js" data-name="bmc-button" data-slug="hnvcam" data-color="#FFDD00" data-emoji="☕"  data-font="Cookie" data-text="Buy me a coffee" data-outline-color="#000000" data-font-color="#000000" data-coffee-color="#ffffff" ></script>
 </div>
