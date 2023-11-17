@@ -9,4 +9,9 @@ enum Frequency {
 
   final String value;
   const Frequency(this.value);
+
+  @override
+  String toString() {
+    return value;
+  }
 }

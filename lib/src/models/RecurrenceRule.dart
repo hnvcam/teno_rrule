@@ -57,7 +57,7 @@ class RecurrenceRule extends Equatable {
     //       time.  If the "DTSTART" property is specified as a date with UTC
     //       time or a date with local time and time zone reference, then the
     //       UNTIL rule part MUST be specified as a date with UTC time.
-    assert(isLocal != true || endDate == null || endDate!.isUtc,
+    assert(isLocal == true || endDate == null || endDate!.isUtc,
         'required UTC value for non-local rrule');
 
     //    +----------+--------+--------+-------+-------+------+-------+------+
