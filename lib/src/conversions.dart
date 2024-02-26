@@ -172,7 +172,7 @@ RecurrenceRule _parseRRule(String line) {
   for (String group in groups) {
     final pair = group.split('=');
     if (pair.length != 2) {
-      throw ParseException('Invalid format of {key}={value}', group);
+      throw ParseException('Invalid format of {key}={value}: $group', group);
     }
     final key = pair[0];
     final value = pair[1];
@@ -181,7 +181,7 @@ RecurrenceRule _parseRRule(String line) {
         frequency = Frequency.values.firstWhere(
             (element) => element.value == value,
             orElse: () =>
-                throw ParseException('Unsupported FREQ value', value));
+                throw ParseException('Unsupported FREQ value: $value', value));
         break;
       case 'WKST':
         weekStart = WeekDay.fromString(value).weekDay;

@@ -60,7 +60,12 @@ extension InstancesQuery on RecurrenceRule {
         if (element.isBeforeUnit(effectiveEnd, unit: Unit.second)) {
           // I understand that the EXDATE is applied after RRULE, if so
           // we don't add the element to final result, but still count it.
-          if (isEmpty(excludedDates) || !excludedDates!.contains(element)) {
+          if (isEmpty(excludedDates) ||
+              !excludedDates!.fold(
+                  false,
+                  (contained, exDate) =>
+                      contained ||
+                      exDate.isSameUnit(element, unit: Unit.day))) {
             results.add(element);
           }
           effectiveCount--;
