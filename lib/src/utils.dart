@@ -60,6 +60,14 @@ DateTime cloneWith(DateTime dateTime,
         hour ?? dateTime.hour,
         minute ?? dateTime.minute,
         second ?? dateTime.second);
+  } else if (dateTime.isUtc) {
+    return DateTime.utc(
+        year ?? dateTime.year,
+        month ?? dateTime.month,
+        day ?? dateTime.day,
+        hour ?? dateTime.hour,
+        minute ?? dateTime.minute,
+        second ?? dateTime.second);
   }
   return DateTime(
       year ?? dateTime.year,
