@@ -55,6 +55,8 @@ class WeekDay extends Equatable {
   }
 
   @override
+  // Equatable has already done this.
+  // ignore: hash_and_equals
   bool operator ==(Object other) {
     if (other is int) {
       return occurrence == null && weekDay == other;

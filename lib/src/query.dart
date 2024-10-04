@@ -36,12 +36,16 @@ extension InstancesQuery on RecurrenceRule {
     final effectiveBegin = begin.orBeforeUnit(startDate, unit: Unit.second);
     final effectiveEnd = tzEndDate == null ? end : end.orAfterUnit(tzEndDate);
 
+    final candidateEnd = frequency == Frequency.weekly
+        ? effectiveEnd.endOf(Unit.week, weekStart)
+        : effectiveEnd;
+
     final results = <DateTime>[];
     DateTime instance = cloneWith(startDate);
 
     int effectiveCount = count ?? -1;
     // does not include until
-    while (instance.isBeforeUnit(effectiveEnd, unit: Unit.second)) {
+    while (instance.isBeforeUnit(candidateEnd, unit: Unit.second)) {
       // before range.
       if (instance.isBeforeUnit(effectiveBegin, unit: Unit.second)) {
         instance = _getNextInstance(instance, frequency, interval);

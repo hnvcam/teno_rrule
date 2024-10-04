@@ -11,12 +11,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Dart
         uses: dart-lang/setup-dart@v1
-        with:
-          channel: stable
 
       - name: Install dependencies
         run: dart pub get
