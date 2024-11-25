@@ -7,5 +7,6 @@ export 'src/models/Frequency.dart';
 export 'src/models/RecurrenceRule.dart';
 export 'src/models/WeekDay.dart';
 export 'src/teno_rrule_base.dart';
+export 'src/utils.dart';
 
 // TODO: Export any libraries intended for clients of this package.

@@ -1,3 +1,5 @@
+## 0.0.7
+- Expose utilities for convenience.
 ## 0.0.6
 - Fix the bug where combining Weekly and byWeekDays recurrence rules sometimes misses recurrence instances.
 ## 0.0.5
