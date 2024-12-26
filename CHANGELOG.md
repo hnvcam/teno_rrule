@@ -1,3 +1,5 @@
+## 0.0.8
+- Fix: Missing elements in rrule BYDAY occurrences across years.
 ## 0.0.7
 - Expose utilities for convenience.
 ## 0.0.6

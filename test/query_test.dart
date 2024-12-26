@@ -1,5 +1,4 @@
 import 'package:teno_datetime/teno_datetime.dart';
-import 'package:teno_rrule/src/utils.dart';
 import 'package:teno_rrule/teno_rrule.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest_10y.dart';

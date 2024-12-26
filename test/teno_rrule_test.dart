@@ -6,7 +6,7 @@ void main() {
   initializeTimeZones();
 
   group('Recurrence weekly', () {
-    test('WEEKLY - Start date is diffrent from byWeekDays', () {
+    test('WEEKLY - Start date is different from byWeekDays', () {
       final rrule = RecurrenceRule.from('DTSTART:20240921T000000\n'
           'RRULE:FREQ=WEEKLY;UNTIL=20250319T000032Z;BYDAY=TU')!;
       final instances =
@@ -16,7 +16,7 @@ void main() {
       ]);
     });
 
-    test('MONTLY - Start date is diffrent from byWeekDays', () {
+    test('MONTLY - Start date is different from byWeekDays', () {
       final rrule = RecurrenceRule.from('DTSTART:20240921T000000\n'
           'RRULE:FREQ=MONTHLY;UNTIL=20250319T000032Z;BYDAY=1FR')!;
       final instances =

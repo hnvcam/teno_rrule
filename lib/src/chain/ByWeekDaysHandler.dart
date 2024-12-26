@@ -100,7 +100,7 @@ class ByWeekDaysHandler extends BaseHandler {
       DateTime element, RecurrenceRule rrule) {
     final effectiveWeekStart = rrule.weekStart ?? firstDayOfWeek;
     final localWeekStart = element.startOf(Unit.week, effectiveWeekStart);
-    final tzWeekStart = cloneWith(element,
+    final tzWeekStart = cloneWith(element, year: localWeekStart.year,
         month: localWeekStart.month, day: localWeekStart.day);
     return rrule.byWeekDays!.map((day) {
       // The BYDAY rule part MUST
