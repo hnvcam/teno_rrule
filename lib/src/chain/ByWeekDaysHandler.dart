@@ -100,8 +100,10 @@ class ByWeekDaysHandler extends BaseHandler {
       DateTime element, RecurrenceRule rrule) {
     final effectiveWeekStart = rrule.weekStart ?? firstDayOfWeek;
     final localWeekStart = element.startOf(Unit.week, effectiveWeekStart);
-    final tzWeekStart = cloneWith(element, year: localWeekStart.year,
-        month: localWeekStart.month, day: localWeekStart.day);
+    final tzWeekStart = cloneWith(element,
+        year: localWeekStart.year,
+        month: localWeekStart.month,
+        day: localWeekStart.day);
     return rrule.byWeekDays!.map((day) {
       // The BYDAY rule part MUST
       //       NOT be specified with a numeric value when the FREQ rule part is
@@ -110,10 +112,11 @@ class ByWeekDaysHandler extends BaseHandler {
 
       late DateTime result;
       if (day.weekDay >= effectiveWeekStart) {
-        result = tzWeekStart.addUnit(days: day.weekDay - effectiveWeekStart);
+        result = locationAwarenessAddDays(
+            tzWeekStart, day.weekDay - effectiveWeekStart);
       } else {
-        result =
-            tzWeekStart.addUnit(days: 7 - effectiveWeekStart + day.weekDay);
+        result = locationAwarenessAddDays(
+            tzWeekStart, 7 - effectiveWeekStart + day.weekDay);
       }
       // print('$effectiveWeekStart $element ${element.weekday} $day => $result');
       return result;
@@ -174,7 +177,7 @@ class ByWeekDaysHandler extends BaseHandler {
       DateTime reverseDay = lastDayOfMonth;
       for (DateTime forwardDay = firstDayOfMonth;
           forwardDay.isSameOrBeforeUnit(lastDayOfMonth, unit: Unit.day);
-          forwardDay = forwardDay.addUnit(days: 1)) {
+          forwardDay = locationAwarenessAddDays(forwardDay, 1)) {
         // Increase the occurrence by 1, simple but always correct.
         final forwardMap = monthWeekDaySamples[forwardDay.weekday] ?? {};
         final forwardOccurrenceIndex =
@@ -190,7 +193,7 @@ class ByWeekDaysHandler extends BaseHandler {
         reverseMap[reverseOccurrenceIndex] = reverseDay;
         minReverseWeekDay[reverseDay.weekday] = reverseOccurrenceIndex;
         monthWeekDaySamples[reverseDay.weekday] = reverseMap;
-        reverseDay = reverseDay.addUnit(days: -1);
+        reverseDay = locationAwarenessAddDays(reverseDay, -1);
       }
 
       return monthWeekDaySamples;
@@ -223,9 +226,9 @@ class ByWeekDaysHandler extends BaseHandler {
       }
       // if we haven't found the first weekDay, then we step 1 day, otherwise step 1 week
       if (count == 0) {
-        date = date.addUnit(days: reversed ? -1 : 1);
+        date = locationAwarenessAddDays(date, reversed ? -1 : 1);
       } else {
-        date = date.addUnit(days: reversed ? -7 : 7);
+        date = locationAwarenessAddDays(date, reversed ? -7 : 7);
       }
     }
     return result;

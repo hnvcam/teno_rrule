@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:teno_datetime/teno_datetime.dart';
 import 'package:timezone/data/latest_10y.dart';
 import 'package:timezone/standalone.dart';
 
@@ -28,6 +29,17 @@ String getTimezoneId(DateTime dateTime) {
 
 String padZeroInt(int value) {
   return value.toString().padLeft(2, '0');
+}
+
+/// teno_datetime only works on DateTime, so it does not know about TZDateTime
+/// unfortunately TZDateTime does not handle copyWith properly, so
+DateTime locationAwarenessAddDays(DateTime instance, int days) {
+  if (instance is TZDateTime) {
+    final dt = instance.addUnit(days: days);
+    return TZDateTime(instance.location, dt.year, dt.month, dt.day, dt.hour,
+        dt.minute, dt.second, dt.millisecond, dt.microsecond);
+  }
+  return instance.addUnit(days: days);
 }
 
 TZDateTime toTZDateTime(Location location, DateTime localDateTime) {

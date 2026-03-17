@@ -6,7 +6,7 @@ import 'package:timezone/standalone.dart';
 
 import 'testUtils.dart';
 
-main() {
+void main() {
   initializeTimeZones();
 
   final testData = [
@@ -16,7 +16,7 @@ main() {
       expected: [
         // ==> (1997 9:00 AM EDT) September 2-11
         for (int i = 0; i < 10; i++)
-          newYorkDateTime(1997, 9, 2, 9).addUnit(days: i)
+          locationAwarenessAddDays(newYorkDateTime(1997, 9, 2, 9), i)
       ]
     ),
     (
@@ -27,7 +27,7 @@ main() {
         //     (1997 9:00 AM EST) October 26-31;November 1-30;December 1-23
         for (DateTime date = newYorkDateTime(1997, 9, 2, 9);
             date.isBeforeUnit(DateTime.utc(1997, 12, 24), unit: Unit.second);
-            date = date.addUnit(days: 1))
+            date = locationAwarenessAddDays(date, 1))
           toTZDateTime(getLocation('America/New_York'), date)
       ]
     ),
@@ -42,7 +42,7 @@ main() {
         //                        December 1,3,...
         for (DateTime date = newYorkDateTime(1997, 9, 2, 9);
             date.isBeforeUnit(maxAllowedDate, unit: Unit.second);
-            date = date.addUnit(days: 2))
+            date = locationAwarenessAddDays(date, 2))
           toTZDateTime(getLocation('America/New_York'), date)
       ]
     ),
@@ -120,9 +120,9 @@ main() {
         //     (1998 9:00 AM EST) January 6,20;
         //                        February 3, 17
         //     ...
-        for (var date = newYorkDateTime(1997, 9, 2, 9);
+        for (DateTime date = newYorkDateTime(1997, 9, 2, 9);
             date.isBefore(maxAllowedDate);
-            date = date.add(const Duration(days: 14)))
+            date = locationAwarenessAddDays(date, 14))
           date
       ]
     ),

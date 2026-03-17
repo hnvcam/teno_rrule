@@ -32,10 +32,10 @@ class ByYearDaysHandler extends SimpleConditionalHandler {
         assert(
             yearDay != 0 && yearDay.abs() <= 366, 'Invalid year day $yearDay');
         if (yearDay > 0) {
-          return startOfYear.addUnit(days: yearDay - 1);
+          return locationAwarenessAddDays(startOfYear, yearDay - 1);
         }
         // because yearDay == -1 means lastYearDay
-        return startOfYear.addUnit(days: lastYearDay + yearDay + 1);
+        return locationAwarenessAddDays(startOfYear, lastYearDay + yearDay + 1);
       });
     }).toList();
   }

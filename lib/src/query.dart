@@ -95,9 +95,9 @@ DateTime _getNextInstance(
     case Frequency.hourly:
       return instance.addUnit(hours: interval);
     case Frequency.daily:
-      return instance.addUnit(days: interval);
+      return locationAwarenessAddDays(instance, interval);
     case Frequency.weekly:
-      return instance.addUnit(days: interval * 7);
+      return locationAwarenessAddDays(instance, interval * 7);
     case Frequency.monthly:
       DateTime temp = cloneWith(instance);
       for (int i = 1; i <= interval; i++) {

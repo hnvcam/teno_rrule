@@ -1,3 +1,5 @@
+## 0.0.10
+- Fix: DAILY and WEEKLY recurrence rules now preserve local time across DST transitions (issue #4).
 ## 0.0.9
 - Update Dart SDK constraint to ^3.5.0.
 - Update dependencies to latest compatible versions.

@@ -28,7 +28,8 @@ class ByWeeksHandler extends SimpleConditionalHandler {
     return instances.flatMap((element) {
       return rrule.byWeeks!.map((week) {
         final firstDayOfFirstWeek = _findFirstWeek(element, effectiveWeekStart);
-        final dateOfWeekNo = firstDayOfFirstWeek.addUnit(days: 7 * (week - 1));
+        final dateOfWeekNo =
+            locationAwarenessAddDays(firstDayOfFirstWeek, 7 * (week - 1));
         final localFirstDayOfWeekNo =
             dateOfWeekNo.startOf(Unit.week, effectiveWeekStart);
         return cloneWith(element,
@@ -54,6 +55,6 @@ class ByWeeksHandler extends SimpleConditionalHandler {
       return januaryFirst;
     }
     // then the next week
-    return tzEndOfWeek.addUnit(days: 1);
+    return locationAwarenessAddDays(tzEndOfWeek, 1);
   }
 }
