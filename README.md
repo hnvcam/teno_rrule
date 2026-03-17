@@ -5,27 +5,27 @@
 ## Dart Recurrence Rule implements RFC5545 (iCalendar)
 This library is designed to support what are defined in [RFC5545 - Recurrence Rule](https://datatracker.ietf.org/doc/html/rfc5545#section-3.8.5.3).
 
-## What is to choose between this library (teno_rrule) vs [rrule](https://pub.dev/packages/rrule)
+## Choosing between this library (teno_rrule) and [rrule](https://pub.dev/packages/rrule)
 | **If you are looking for**                 | Ideal choice  |
 |--------------------------------------------|---------------|
 | Stable with many usages                    | rrule         |
-| Features like WKST, Timezone, Exdates, ... | teno-rrule    |
-| Both above                                 | You will made |
+| Features like WKST, Timezone, Exdates, ... | teno_rrule    |
+| Both above                                 | You decide!   |
 
 ## Getting started
 
 This library utilizes [timezone](https://pub.dev/packages/timezone) to support timezone-based DateTime (TZDateTime),
-so make sure you follow the instruction their for initializing the location database. For short:
+so make sure you follow the instructions there for initializing the location database. In short:
 ```dart
 import 'package:timezone/data/latest_10y.dart';
 ...
 initializeTimeZones();
 ```
-By default, the library will using the standard alone version of the library.
+By default, the library uses the standalone version of the timezone package.
 
 Add this library to your pubspec.yaml
 ```shell
-dart pub add teno-rrule
+dart pub add teno_rrule
 ```
 And you are good to go! 
 
@@ -39,12 +39,12 @@ final rrule = RecurrenceRule(
     byWeekDays: {WeekDay.monday, WeekDay.wednesday, WeekDay.friday});
 ```
 
-#### Get its recurrence by
+#### Query recurrence instances
 ```dart
 final instances = rrule.between(DateTime(1997, 9, 2, 9), DateTime(1997, 10, 2, 9));
 // gets: 1997-09-03 09:00:00.000, 1997-09-05 09:00:00.000, ... 1997-10-01 09:00:00.000
 ```
-end range is exclusive.
+The end range is exclusive.
 
 #### Parse from string
 ```dart
@@ -54,7 +54,7 @@ final rrule = RecurrenceRule.from(rruleString);
 ```
 > You need to initialize the Location database before parsing from string with TZID, otherwise it will throw exception!
 
-#### To use with timezone, you first need to initialize location database at getting start section
+#### To use with timezone, first initialize the location database as shown in the Getting Started section
 ```dart
 final rrule = RecurrenceRule(
     frequency: Frequency.daily,
@@ -62,8 +62,8 @@ final rrule = RecurrenceRule(
     isLocal: false,
     startDate: TZDateTime(getLocation('America/New_York'), 1997, 9, 2, 9));
 ```
-By default, isLocal = true, means it won't care about the timezone in startDate and treats everything as local time. 
-To use with timezone, please set this flag to **false**.
+By default, `isLocal = true`, which means it ignores the timezone in startDate and treats everything as local time.
+To use with timezone, set this flag to **false**.
 
 #### To specify the first day of week
 ```dart
@@ -74,14 +74,14 @@ final rrule = RecurrenceRule(
           byWeekDays: {WeekDay.tuesday, WeekDay.thursday},
           startDate: DateTime(1997, 9, 2, 9));
 ```
-by default, WKST will take the value of **firstDayOfWeek** from [teno_datetime](https://pub.dev/packages/teno_datetime), so you can:
-1. Override the WKST by setting value to property weekStart
-2. Override globally by setting value to **firstDayOfWeek**, for ex:
+By default, WKST takes the value of **firstDayOfWeek** from [teno_datetime](https://pub.dev/packages/teno_datetime), so you can:
+1. Override the WKST by setting the `weekStart` property
+2. Override globally by setting **firstDayOfWeek**, for example:
 ```dart
 firstDayOfWeek = DateTime.saturday;
 ```
 
-#### To select the n occurrence of day
+#### To select the nth occurrence of a day
 ```dart
 final rrule = RecurrenceRule(
     frequency: Frequency.monthly,
@@ -116,13 +116,13 @@ final anotherRRule = rrule.copyWith(interval: 5, count: 5);
 ## Additional information
 This library has been tested with all examples from RFC5545 - section 3.8.5.3. You can have a look at:
 [test/conversions_test.dart](test/conversions_test.dart)
-[test/query_test.dart](test/conversions_test.dart)
+[test/query_test.dart](test/query_test.dart)
 
 You can refer to the current progress at: [TODO.md](TODO.md)
 
-## If you found a bug, issue, or have a request.
-Please submit an issue at https://github.com/hnvcam/teno_rrule/issues. And give me sometime to take a look on it.
-I won't promise to take the action soon, but I will reply you my plan.
+## If you found a bug or have a request
+Please submit an issue at https://github.com/hnvcam/teno_rrule/issues. Please give me some time to take a look at it.
+I may not act on it immediately, but I will reply with my plan.
 
 
 ---

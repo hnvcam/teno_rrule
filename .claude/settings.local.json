@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:pub.dev)",
+      "Bash(dart test:*)"
+    ]
+  }
+}

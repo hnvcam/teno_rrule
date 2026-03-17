@@ -1,3 +1,8 @@
+## 0.0.9
+- Update Dart SDK constraint to ^3.5.0.
+- Update dependencies to latest compatible versions.
+- Add comprehensive tests for SECONDLY frequency, BYSECOND property, BYSETPOS with YEARLY, serialization round-trips, edge cases, and more.
+- Fix language and link issues in README.
 ## 0.0.8
 - Fix: Missing elements in rrule BYDAY occurrences across years.
 ## 0.0.7
