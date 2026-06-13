@@ -2,7 +2,6 @@ import 'package:teno_datetime/teno_datetime.dart';
 import 'package:teno_rrule/teno_rrule.dart' hide isEmpty, isNotEmpty;
 import 'package:test/test.dart';
 import 'package:timezone/data/latest_10y.dart';
-import 'package:timezone/standalone.dart';
 
 import 'testUtils.dart';
 
@@ -17,8 +16,7 @@ void main() {
         count: 5,
       );
       expect(rrule.allInstances, [
-        for (int i = 0; i < 5; i++)
-          DateTime(2024, 1, 1, 12, 0, i),
+        for (int i = 0; i < 5; i++) DateTime(2024, 1, 1, 12, 0, i),
       ]);
     });
 
@@ -150,8 +148,10 @@ void main() {
         bySeconds: {0, 30},
         count: 6,
       );
-      expect(rrule.rfc5545String,
-          isSameRFC5545StringAs('DTSTART:20240101T120000\nRRULE:FREQ=MINUTELY;COUNT=6;BYSECOND=0,30'));
+      expect(
+          rrule.rfc5545String,
+          isSameRFC5545StringAs(
+              'DTSTART:20240101T120000\nRRULE:FREQ=MINUTELY;COUNT=6;BYSECOND=0,30'));
     });
 
     test('BYSECOND parsing', () {
@@ -177,10 +177,11 @@ void main() {
   });
 
   group('BYSETPOS with YEARLY', () {
-    test('YEARLY with BYMONTH and BYDAY and BYSETPOS (last Thursday in November)', () {
+    test(
+        'YEARLY with BYMONTH and BYDAY and BYSETPOS (last Thursday in November)',
+        () {
       // US Thanksgiving: 4th Thursday in November
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYMONTH=11;BYDAY=TH;BYSETPOS=4;COUNT=5')!;
       expect(rrule.allInstances, [
         DateTime(2020, 11, 26, 9),
@@ -191,9 +192,10 @@ void main() {
       ]);
     });
 
-    test('YEARLY with BYMONTH and BYDAY and BYSETPOS=-1 (last weekday of the year)', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+    test(
+        'YEARLY with BYMONTH and BYDAY and BYSETPOS=-1 (last weekday of the year)',
+        () {
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYMONTH=12;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1;COUNT=4')!;
       expect(rrule.allInstances, [
         DateTime(2020, 12, 31, 9), // Thursday
@@ -209,12 +211,20 @@ void main() {
       final rrule = RecurrenceRule(
         frequency: Frequency.monthly,
         startDate: DateTime(2024, 1, 1, 9),
-        byWeekDays: {WeekDay.monday, WeekDay.tuesday, WeekDay.wednesday, WeekDay.thursday, WeekDay.friday},
+        byWeekDays: {
+          WeekDay.monday,
+          WeekDay.tuesday,
+          WeekDay.wednesday,
+          WeekDay.thursday,
+          WeekDay.friday
+        },
         bySetPositions: {-1},
         count: 3,
       );
-      expect(rrule.rfc5545String,
-          isSameRFC5545StringAs('DTSTART:20240101T090000\nRRULE:FREQ=MONTHLY;COUNT=3;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1'));
+      expect(
+          rrule.rfc5545String,
+          isSameRFC5545StringAs(
+              'DTSTART:20240101T090000\nRRULE:FREQ=MONTHLY;COUNT=3;BYDAY=MO,TU,WE,TH,FR;BYSETPOS=-1'));
     });
 
     test('BYSETPOS parsing', () {
@@ -233,8 +243,10 @@ void main() {
         byHours: {9, 17},
         count: 4,
       );
-      expect(rrule.rfc5545String,
-          isSameRFC5545StringAs('DTSTART:20240101T090000\nRRULE:FREQ=DAILY;COUNT=4;BYHOUR=9,17'));
+      expect(
+          rrule.rfc5545String,
+          isSameRFC5545StringAs(
+              'DTSTART:20240101T090000\nRRULE:FREQ=DAILY;COUNT=4;BYHOUR=9,17'));
     });
 
     test('BYHOUR parsing', () {
@@ -251,8 +263,10 @@ void main() {
         byMinutes: {0, 30},
         count: 4,
       );
-      expect(rrule.rfc5545String,
-          isSameRFC5545StringAs('DTSTART:20240101T090000\nRRULE:FREQ=HOURLY;COUNT=4;BYMINUTE=0,30'));
+      expect(
+          rrule.rfc5545String,
+          isSameRFC5545StringAs(
+              'DTSTART:20240101T090000\nRRULE:FREQ=HOURLY;COUNT=4;BYMINUTE=0,30'));
     });
 
     test('BYMINUTE parsing', () {
@@ -268,8 +282,7 @@ void main() {
       // Implementation: startOfYear.addUnit(days: lastYearDay + yearDay + 1)
       // -1 with 366 days: 366 + (-1) + 1 = 366 => Jan 1 + 366 = Jan 1 next year
       // Note: this appears off-by-one vs RFC5545 which says -1 = last day of year
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYYEARDAY=-1;COUNT=4')!;
       expect(rrule.allInstances, [
         DateTime(2021, 1, 1, 9),
@@ -280,8 +293,7 @@ void main() {
     });
 
     test('YEARLY with negative BYYEARDAY=-31', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYYEARDAY=-31;COUNT=3')!;
       expect(rrule.allInstances, [
         DateTime(2020, 12, 2, 9),
@@ -302,8 +314,7 @@ void main() {
     });
 
     test('MONTHLY with BYMONTHDAY=29 skips February in non-leap years', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20230101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20230101T090000\n'
           'RRULE:FREQ=MONTHLY;BYMONTHDAY=29;COUNT=5')!;
       expect(rrule.allInstances, [
         DateTime(2023, 1, 29, 9),
@@ -315,8 +326,7 @@ void main() {
     });
 
     test('MONTHLY with BYMONTHDAY=29 includes February in leap years', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=MONTHLY;BYMONTHDAY=29;COUNT=5')!;
       expect(rrule.allInstances, [
         DateTime(2024, 1, 29, 9),
@@ -328,14 +338,13 @@ void main() {
     });
 
     test('MONTHLY with BYMONTHDAY=31 skips months with fewer days', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=MONTHLY;BYMONTHDAY=31;COUNT=7')!;
       expect(rrule.allInstances, [
         DateTime(2024, 1, 31, 9),
-        DateTime(2024, 3, 31, 9),  // Feb (29 days), skipped
-        DateTime(2024, 5, 31, 9),  // Apr (30 days), skipped
-        DateTime(2024, 7, 31, 9),  // Jun (30 days), skipped
+        DateTime(2024, 3, 31, 9), // Feb (29 days), skipped
+        DateTime(2024, 5, 31, 9), // Apr (30 days), skipped
+        DateTime(2024, 7, 31, 9), // Jun (30 days), skipped
         DateTime(2024, 8, 31, 9),
         DateTime(2024, 10, 31, 9), // Sep (30 days), skipped
         DateTime(2024, 12, 31, 9), // Nov (30 days), skipped
@@ -343,8 +352,7 @@ void main() {
     });
 
     test('YEARLY with large INTERVAL', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20000101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20000101T090000\n'
           'RRULE:FREQ=YEARLY;INTERVAL=10;COUNT=3')!;
       expect(rrule.allInstances, [
         DateTime(2000, 1, 1, 9),
@@ -354,8 +362,7 @@ void main() {
     });
 
     test('WEEKLY with INTERVAL=4 and COUNT=1', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=WEEKLY;INTERVAL=4;COUNT=1')!;
       expect(rrule.allInstances, [
         DateTime(2024, 1, 1, 9),
@@ -365,10 +372,10 @@ void main() {
 
   group('between method', () {
     test('between filters correctly for DAILY', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=DAILY;COUNT=30')!;
-      final instances = rrule.between(DateTime(2024, 1, 10), DateTime(2024, 1, 15));
+      final instances =
+          rrule.between(DateTime(2024, 1, 10), DateTime(2024, 1, 15));
       expect(instances, [
         DateTime(2024, 1, 10, 9),
         DateTime(2024, 1, 11, 9),
@@ -379,10 +386,10 @@ void main() {
     });
 
     test('between with MONTHLY and BYMONTHDAY returns instances in range', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240115T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240115T090000\n'
           'RRULE:FREQ=MONTHLY;BYMONTHDAY=15;COUNT=12')!;
-      final instances = rrule.between(DateTime(2024, 3, 1), DateTime(2024, 6, 1));
+      final instances =
+          rrule.between(DateTime(2024, 3, 1), DateTime(2024, 6, 1));
       expect(instances, [
         DateTime(2024, 3, 15, 9),
         DateTime(2024, 4, 15, 9),
@@ -391,19 +398,19 @@ void main() {
     });
 
     test('between returns empty when range is before start', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240601T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240601T090000\n'
           'RRULE:FREQ=DAILY;COUNT=10')!;
-      final instances = rrule.between(DateTime(2024, 1, 1), DateTime(2024, 2, 1));
+      final instances =
+          rrule.between(DateTime(2024, 1, 1), DateTime(2024, 2, 1));
       expect(instances, isEmpty);
     });
 
     test('between returns empty when range is after all instances', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=DAILY;UNTIL=20240106T000000Z')!;
       // UNTIL Jan 6, so Jan 10-20 should be empty
-      final instances = rrule.between(DateTime(2024, 1, 10), DateTime(2024, 1, 20));
+      final instances =
+          rrule.between(DateTime(2024, 1, 10), DateTime(2024, 1, 20));
       expect(instances, isEmpty);
     });
   });
@@ -492,13 +499,12 @@ void main() {
 
   group('WEEKLY edge cases', () {
     test('WEEKLY with multiple BYDAY across week boundary', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=WEEKLY;BYDAY=MO,FR;COUNT=6')!;
       expect(rrule.allInstances, [
-        DateTime(2024, 1, 1, 9),  // Monday
-        DateTime(2024, 1, 5, 9),  // Friday
-        DateTime(2024, 1, 8, 9),  // Monday
+        DateTime(2024, 1, 1, 9), // Monday
+        DateTime(2024, 1, 5, 9), // Friday
+        DateTime(2024, 1, 8, 9), // Monday
         DateTime(2024, 1, 12, 9), // Friday
         DateTime(2024, 1, 15, 9), // Monday
         DateTime(2024, 1, 19, 9), // Friday
@@ -506,46 +512,42 @@ void main() {
     });
 
     test('WEEKLY with all 7 days', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=WEEKLY;BYDAY=MO,TU,WE,TH,FR,SA,SU;COUNT=7')!;
       expect(rrule.allInstances, [
-        for (int i = 0; i < 7; i++)
-          DateTime(2024, 1, 1, 9).addUnit(days: i),
+        for (int i = 0; i < 7; i++) DateTime(2024, 1, 1, 9).addUnit(days: i),
       ]);
     });
   });
 
   group('YEARLY with BYWEEKNO and multiple BYDAY', () {
     test('YEARLY with BYWEEKNO=1 and BYDAY=MO,FR', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYWEEKNO=1;BYDAY=MO,FR;COUNT=6')!;
       final instances = rrule.allInstances;
       expect(instances.length, 6);
       // Each year should have a Monday and Friday in week 1
       for (var inst in instances) {
-        expect(inst.weekday == DateTime.monday || inst.weekday == DateTime.friday, isTrue);
+        expect(
+            inst.weekday == DateTime.monday || inst.weekday == DateTime.friday,
+            isTrue);
       }
     });
   });
 
   group('DAILY with BYMONTH limiting', () {
     test('DAILY with BYMONTH limits to specific months', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=DAILY;BYMONTH=1;COUNT=5')!;
       expect(rrule.allInstances, [
-        for (int i = 0; i < 5; i++)
-          DateTime(2024, 1, 1 + i, 9),
+        for (int i = 0; i < 5; i++) DateTime(2024, 1, 1 + i, 9),
       ]);
     });
   });
 
   group('YEARLY with BYDAY occurrence across years', () {
     test('YEARLY with -1FR (last Friday of the year)', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYDAY=-1FR;COUNT=4')!;
       expect(rrule.allInstances, [
         DateTime(2020, 12, 25, 9),
@@ -556,8 +558,7 @@ void main() {
     });
 
     test('YEARLY with 1MO (first Monday of the year)', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYDAY=1MO;COUNT=4')!;
       expect(rrule.allInstances, [
         DateTime(2020, 1, 6, 9),
@@ -584,9 +585,9 @@ void main() {
     });
 
     test('MINUTELY with BYSECOND and timezone', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART;TZID=America/New_York:20240101T120000\n'
-          'RRULE:FREQ=MINUTELY;BYSECOND=0,30;COUNT=4')!;
+      final rrule =
+          RecurrenceRule.from('DTSTART;TZID=America/New_York:20240101T120000\n'
+              'RRULE:FREQ=MINUTELY;BYSECOND=0,30;COUNT=4')!;
       expect(rrule.allInstances, [
         newYorkDateTime(2024, 1, 1, 12, 0, 0),
         newYorkDateTime(2024, 1, 1, 12, 0, 30),
@@ -603,8 +604,10 @@ void main() {
         startDate: DateTime(2024, 1, 1, 12, 0, 0),
         count: 5,
       );
-      expect(rrule.rfc5545String,
-          isSameRFC5545StringAs('DTSTART:20240101T120000\nRRULE:FREQ=SECONDLY;COUNT=5'));
+      expect(
+          rrule.rfc5545String,
+          isSameRFC5545StringAs(
+              'DTSTART:20240101T120000\nRRULE:FREQ=SECONDLY;COUNT=5'));
     });
 
     test('SECONDLY parsing', () {
@@ -630,8 +633,7 @@ void main() {
 
   group('MONTHLY with BYDAY and no occurrence (all weekdays in month)', () {
     test('MONTHLY BYDAY=MO with UNTIL limits correctly', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240101T090000\n'
           'RRULE:FREQ=MONTHLY;BYDAY=MO;UNTIL=20240301T000000Z')!;
       final instances = rrule.allInstances;
       // January: 1, 8, 15, 22, 29
@@ -652,12 +654,11 @@ void main() {
 
   group('YEARLY with BYYEARDAY leap year handling', () {
     test('YEARLY BYYEARDAY=60 on leap vs non-leap years', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYYEARDAY=60;COUNT=4')!;
       expect(rrule.allInstances, [
         DateTime(2020, 2, 29, 9), // leap year: day 60 = Feb 29
-        DateTime(2021, 3, 1, 9),  // non-leap: day 60 = Mar 1
+        DateTime(2021, 3, 1, 9), // non-leap: day 60 = Mar 1
         DateTime(2022, 3, 1, 9),
         DateTime(2023, 3, 1, 9),
       ]);
@@ -666,8 +667,7 @@ void main() {
     test('YEARLY BYYEARDAY=366 in leap year', () {
       // BYYEARDAY=366: day 366 = Dec 31 in a leap year
       // In non-leap years (365 days), addUnit(days: 365) overflows to Jan 1 next year
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20200101T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20200101T090000\n'
           'RRULE:FREQ=YEARLY;BYYEARDAY=366;COUNT=1')!;
       expect(rrule.allInstances, [
         DateTime(2020, 12, 31, 9), // leap year: Jan 1 + 365 = Dec 31
@@ -696,8 +696,7 @@ void main() {
 
   group('MONTHLY with BYMONTHDAY and BYMONTH combined', () {
     test('MONTHLY with BYMONTH and BYMONTHDAY limits to specific months', () {
-      final rrule = RecurrenceRule.from(
-          'DTSTART:20240115T090000\n'
+      final rrule = RecurrenceRule.from('DTSTART:20240115T090000\n'
           'RRULE:FREQ=MONTHLY;BYMONTH=3,6,9,12;BYMONTHDAY=15;COUNT=4')!;
       expect(rrule.allInstances, [
         DateTime(2024, 3, 15, 9),
